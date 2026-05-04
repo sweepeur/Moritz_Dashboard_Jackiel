@@ -1318,31 +1318,97 @@ input, textarea, select { font: inherit; color: inherit; }
 .voice-attrib .ctx { opacity: 0.75; }
 
 /* =====================================================
-   Bench module
+   Bench module — denser per-lawyer card with status, matters,
+   hours, SLA hit, and next deadline cue
    ===================================================== */
 .bench-row {
   display: grid;
-  grid-template-columns: 28px 1fr auto;
-  align-items: center;
-  gap: 10px;
-  height: 44px;
-  padding: 0 4px;
+  grid-template-columns: 32px 1fr auto;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 6px;
+  border-radius: var(--radius-sm);
+  transition: background 80ms ease;
 }
 .bench-row + .bench-row { border-top: 1px solid var(--border-1); }
-.bench-id {
+.bench-row:hover { background: var(--accent-3); }
+.bench-row .avatar { margin-top: 2px; flex-shrink: 0; }
+
+.bench-id { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.bench-id .name-row {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 6px;
   min-width: 0;
 }
-.bench-id .name { font-size: var(--fs-sm); color: var(--foreground); font-weight: 500; }
-.bench-id .dept { font-size: var(--fs-mini); color: var(--muted-foreground); }
+.bench-id .name {
+  font-size: var(--fs-sm);
+  color: var(--foreground);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bench-id .status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+.bench-id .status-dot[data-s="overcap"] { background: var(--destructive); }
+.bench-id .status-dot[data-s="watch"] { background: var(--status-margin-watch-fg); }
+.bench-id .status-dot[data-s="ok"] { background: var(--status-on-track-fg); }
+.bench-id .status-dot[data-s="ooo"] { background: var(--muted-foreground); opacity: 0.5; }
+.bench-id .meta {
+  font-size: var(--fs-mini);
+  color: var(--muted-foreground);
+  font-family: "Geist Mono", monospace;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bench-id .stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  font-size: var(--fs-mini);
+  color: var(--muted-foreground);
+  margin-top: 2px;
+  line-height: 1.4;
+}
+.bench-id .stats .sep { opacity: 0.4; }
+.bench-id .stats .next-due { color: var(--status-margin-watch-fg); font-weight: 500; }
+.bench-row[data-s="overcap"] .stats .next-due { color: var(--status-sla-risk-fg); }
+.bench-row[data-s="ok"] .stats .next-due { color: var(--status-on-track-fg); }
+
+.bench-util {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+  min-width: 84px;
+}
+.bench-util .util-pct {
+  font-family: "Geist Mono", monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--foreground);
+  letter-spacing: 0.02em;
+}
+.bench-row[data-s="overcap"] .util-pct { color: var(--status-sla-risk-fg); }
+.bench-row[data-s="watch"] .util-pct { color: var(--status-margin-watch-fg); }
+.bench-row[data-s="ok"] .util-pct { color: var(--status-on-track-fg); }
+
 .cap-bar {
   width: 80px;
-  height: 6px;
+  height: 4px;
   background: var(--secondary);
   border-radius: 999px;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 .cap-bar .fill {
   position: absolute;
@@ -1351,7 +1417,45 @@ input, textarea, select { font: inherit; color: inherit; }
   border-radius: 999px;
 }
 .cap-bar.over .fill { background: var(--destructive); }
-.cap-bar.ok .fill { background: var(--status-on-track-fg); opacity: 0.7; }
+.cap-bar.ok .fill { background: var(--status-on-track-fg); opacity: 0.85; }
+/* Threshold marker at 100% */
+.cap-bar::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: -2px;
+  bottom: -2px;
+  width: 1px;
+  background: var(--muted-foreground);
+  opacity: 0.4;
+}
+
+/* Bench module footer link */
+.bench-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 6px 4px;
+  margin-top: 8px;
+  border-top: 1px solid var(--border-1);
+  font-size: var(--fs-mini);
+  color: var(--muted-foreground);
+}
+.bench-footer .summary {
+  font-family: "Geist Mono", monospace;
+  letter-spacing: 0.02em;
+}
+.bench-footer .view-all {
+  color: var(--foreground);
+  font-weight: 500;
+  background: transparent;
+  border: 0;
+  padding: 4px 8px;
+  margin-right: -8px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.bench-footer .view-all:hover { background: var(--accent-3); }
 
 /* =====================================================
    Revenue chart card — natural height, fixed chart band
@@ -2843,25 +2947,89 @@ input, textarea, select { font: inherit; color: inherit; }
               </div>
             </div>
             <div class="mod-body" id="benchBody">
-              <div class="bench-row">
+              <div class="bench-row" data-s="overcap">
                 <div class="avatar">MC</div>
-                <div class="bench-id"><span class="name">Marcus Chen</span><span class="dept">SaaS · Commercial</span></div>
-                <div class="cap-bar over"><div class="fill" style="width: 112%"></div></div>
+                <div class="bench-id">
+                  <div class="name-row">
+                    <span class="status-dot" data-s="overcap"></span>
+                    <span class="name">Marcus Chen</span>
+                  </div>
+                  <span class="meta">L-014 · SaaS · Commercial</span>
+                  <span class="stats">
+                    <span>6 matters</span><span class="sep">·</span>
+                    <span>38h wk</span><span class="sep">·</span>
+                    <span class="next-due">2 due Fri</span>
+                  </span>
+                </div>
+                <div class="bench-util">
+                  <div class="util-pct">112%</div>
+                  <div class="cap-bar over"><div class="fill" style="width: 100%"></div></div>
+                </div>
               </div>
-              <div class="bench-row">
+
+              <div class="bench-row" data-s="overcap">
                 <div class="avatar">PR</div>
-                <div class="bench-id"><span class="name">Priya Raman</span><span class="dept">Privacy · Compliance</span></div>
-                <div class="cap-bar over"><div class="fill" style="width: 108%"></div></div>
+                <div class="bench-id">
+                  <div class="name-row">
+                    <span class="status-dot" data-s="overcap"></span>
+                    <span class="name">Priya Raman</span>
+                  </div>
+                  <span class="meta">L-008 · Privacy · Compliance</span>
+                  <span class="stats">
+                    <span>5 matters</span><span class="sep">·</span>
+                    <span>36h wk</span><span class="sep">·</span>
+                    <span class="next-due">1 due tomorrow</span>
+                  </span>
+                </div>
+                <div class="bench-util">
+                  <div class="util-pct">108%</div>
+                  <div class="cap-bar over"><div class="fill" style="width: 100%"></div></div>
+                </div>
               </div>
-              <div class="bench-row">
+
+              <div class="bench-row" data-s="watch">
                 <div class="avatar">JK</div>
-                <div class="bench-id"><span class="name">Jonas Kallio</span><span class="dept">Employment</span></div>
-                <div class="cap-bar"><div class="fill" style="width: 94%"></div></div>
+                <div class="bench-id">
+                  <div class="name-row">
+                    <span class="status-dot" data-s="watch"></span>
+                    <span class="name">Jonas Kallio</span>
+                  </div>
+                  <span class="meta">L-019 · Employment</span>
+                  <span class="stats">
+                    <span>4 matters</span><span class="sep">·</span>
+                    <span>32h wk</span><span class="sep">·</span>
+                    <span>clear today</span>
+                  </span>
+                </div>
+                <div class="bench-util">
+                  <div class="util-pct">94%</div>
+                  <div class="cap-bar"><div class="fill" style="width: 94%"></div></div>
+                </div>
               </div>
-              <div class="bench-row">
+
+              <div class="bench-row" data-s="ok">
                 <div class="avatar">EH</div>
-                <div class="bench-id"><span class="name">Ella Hoffmann</span><span class="dept">IP · Trademarks</span></div>
-                <div class="cap-bar ok"><div class="fill" style="width: 72%"></div></div>
+                <div class="bench-id">
+                  <div class="name-row">
+                    <span class="status-dot" data-s="ok"></span>
+                    <span class="name">Ella Hoffmann</span>
+                  </div>
+                  <span class="meta">L-011 · IP · Trademarks</span>
+                  <span class="stats">
+                    <span>3 matters</span><span class="sep">·</span>
+                    <span>24h wk</span><span class="sep">·</span>
+                    <span class="next-due">ready for new</span>
+                  </span>
+                </div>
+                <div class="bench-util">
+                  <div class="util-pct">72%</div>
+                  <div class="cap-bar ok"><div class="fill" style="width: 72%"></div></div>
+                </div>
+              </div>
+
+              <div class="bench-footer">
+                <span class="summary">avg util 87% · 4 over cap · 156h booked</span>
+                <button class="view-all">View all 22 →</button>
               </div>
             </div>
           </div>
@@ -4913,25 +5081,57 @@ input, textarea, select { font: inherit; color: inherit; }
       benchSub: '22 lawyers · all in healthy range',
 
       benchBody: `
-        <div class="bench-row">
+        <div class="bench-row" data-s="ok">
           <div class="avatar">MC</div>
-          <div class="bench-id"><span class="name">Marcus Chen</span><span class="dept">SaaS · Commercial</span></div>
-          <div class="cap-bar ok"><div class="fill" style="width: 78%"></div></div>
+          <div class="bench-id">
+            <div class="name-row"><span class="status-dot" data-s="ok"></span><span class="name">Marcus Chen</span></div>
+            <span class="meta">L-014 · SaaS · Commercial</span>
+            <span class="stats"><span>4 matters</span><span class="sep">·</span><span>30h wk</span><span class="sep">·</span><span class="next-due">cleared today</span></span>
+          </div>
+          <div class="bench-util">
+            <div class="util-pct">78%</div>
+            <div class="cap-bar ok"><div class="fill" style="width: 78%"></div></div>
+          </div>
         </div>
-        <div class="bench-row">
+        <div class="bench-row" data-s="ok">
           <div class="avatar">PR</div>
-          <div class="bench-id"><span class="name">Priya Raman</span><span class="dept">Privacy · Compliance</span></div>
-          <div class="cap-bar ok"><div class="fill" style="width: 72%"></div></div>
+          <div class="bench-id">
+            <div class="name-row"><span class="status-dot" data-s="ok"></span><span class="name">Priya Raman</span></div>
+            <span class="meta">L-008 · Privacy · Compliance</span>
+            <span class="stats"><span>3 matters</span><span class="sep">·</span><span>27h wk</span><span class="sep">·</span><span class="next-due">ready for new</span></span>
+          </div>
+          <div class="bench-util">
+            <div class="util-pct">72%</div>
+            <div class="cap-bar ok"><div class="fill" style="width: 72%"></div></div>
+          </div>
         </div>
-        <div class="bench-row">
+        <div class="bench-row" data-s="ok">
           <div class="avatar">JK</div>
-          <div class="bench-id"><span class="name">Jonas Kallio</span><span class="dept">Employment</span></div>
-          <div class="cap-bar ok"><div class="fill" style="width: 81%"></div></div>
+          <div class="bench-id">
+            <div class="name-row"><span class="status-dot" data-s="ok"></span><span class="name">Jonas Kallio</span></div>
+            <span class="meta">L-019 · Employment</span>
+            <span class="stats"><span>4 matters</span><span class="sep">·</span><span>31h wk</span><span class="sep">·</span><span class="next-due">on schedule</span></span>
+          </div>
+          <div class="bench-util">
+            <div class="util-pct">81%</div>
+            <div class="cap-bar ok"><div class="fill" style="width: 81%"></div></div>
+          </div>
         </div>
-        <div class="bench-row">
+        <div class="bench-row" data-s="ok">
           <div class="avatar">EH</div>
-          <div class="bench-id"><span class="name">Ella Hoffmann</span><span class="dept">IP · Trademarks</span></div>
-          <div class="cap-bar ok"><div class="fill" style="width: 65%"></div></div>
+          <div class="bench-id">
+            <div class="name-row"><span class="status-dot" data-s="ok"></span><span class="name">Ella Hoffmann</span></div>
+            <span class="meta">L-011 · IP · Trademarks</span>
+            <span class="stats"><span>2 matters</span><span class="sep">·</span><span>22h wk</span><span class="sep">·</span><span class="next-due">capacity available</span></span>
+          </div>
+          <div class="bench-util">
+            <div class="util-pct">65%</div>
+            <div class="cap-bar ok"><div class="fill" style="width: 65%"></div></div>
+          </div>
+        </div>
+        <div class="bench-footer">
+          <span class="summary">avg util 74% · 0 over cap · 110h booked</span>
+          <button class="view-all">View all 22 →</button>
         </div>
       `,
 
