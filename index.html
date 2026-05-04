@@ -1133,14 +1133,14 @@ input, textarea, select { font: inherit; color: inherit; }
 .kpi-strip { position: relative; }
 .kpi-shrink-btn {
   position: absolute;
-  top: -10px;
+  top: -12px;
   right: 0;
   font-family: "Geist Mono", monospace;
   font-size: 10px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted-foreground);
-  padding: 3px 9px;
+  padding: 3px 10px;
   border-radius: 999px;
   background: var(--background);
   border: 1px solid var(--border);
@@ -1149,8 +1149,8 @@ input, textarea, select { font: inherit; color: inherit; }
   align-items: center;
   gap: 5px;
   transition: background 80ms ease, color 80ms ease, border-color 80ms ease;
-  z-index: 2;
-  height: 22px;
+  z-index: 5;
+  height: 24px;
 }
 .kpi-shrink-btn:hover {
   color: var(--foreground);
@@ -1227,6 +1227,10 @@ input, textarea, select { font: inherit; color: inherit; }
   font-weight: 400;
   letter-spacing: 0;
   text-transform: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 .kpi-value {
   font-family: "Fraunces", serif;
@@ -3176,9 +3180,9 @@ input, textarea, select { font: inherit; color: inherit; }
           <span>09:48</span>
         </div>
         <h1 class="h-lede lede-text">
-          <span class="accent" data-highlight="qa">Seven matters</span> need attention.
-          <span class="accent" data-highlight="bench">Four lawyers</span> over capacity.
-          Margin running <span class="accent watch" data-highlight="revenue">2.3% behind</span> estimate.
+          <span class="accent" data-highlight="qa">Five matters</span> need attention.
+          <span class="accent" data-highlight="bench">Two lawyers</span> over capacity.
+          Margin running <span class="accent watch" data-highlight="revenue">1.2% behind</span> estimate.
         </h1>
       </section>
 
@@ -3192,9 +3196,9 @@ input, textarea, select { font: inherit; color: inherit; }
         </button>
         <!-- Hero: On-time delivery -->
         <div class="kpi hero">
-          <div class="kpi-eyebrow">On-time delivery · 7 days</div>
-          <div class="kpi-value">94%</div>
-          <div class="kpi-sub">matters delivered within committed turnaround</div>
+          <div class="kpi-eyebrow">On-time delivery, 7 days</div>
+          <div class="kpi-value">96%</div>
+          <div class="kpi-sub">delivered within committed turnaround</div>
           <div class="kpi-chart">
             <svg viewBox="0 0 600 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M0 78 L40 76 L80 70 L120 66 L160 64 L200 58 L240 55 L280 52 L320 46 L360 42 L400 38 L440 33 L480 28 L520 24 L560 18 L598 14"
@@ -3207,7 +3211,7 @@ input, textarea, select { font: inherit; color: inherit; }
         <!-- Untouched -->
         <div class="kpi">
           <div class="kpi-eyebrow">Untouched matters</div>
-          <div class="kpi-value">6</div>
+          <div class="kpi-value">4</div>
           <div class="kpi-sub">no activity in &gt; 4 hours</div>
           <div class="kpi-chart">
             <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
@@ -3227,7 +3231,7 @@ input, textarea, select { font: inherit; color: inherit; }
         <!-- Over capacity -->
         <div class="kpi">
           <div class="kpi-eyebrow">Over capacity</div>
-          <div class="kpi-value">4</div>
+          <div class="kpi-value">2</div>
           <div class="kpi-sub">lawyers above 100% utilization</div>
           <div class="kpi-chart">
             <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
@@ -3246,8 +3250,8 @@ input, textarea, select { font: inherit; color: inherit; }
 
         <!-- Fee margin -->
         <div class="kpi">
-          <div class="kpi-eyebrow">Fee margin · wk</div>
-          <div class="kpi-value down">−2.3%</div>
+          <div class="kpi-eyebrow">Fee margin, wk</div>
+          <div class="kpi-value down">−1.2%</div>
           <div class="kpi-sub">vs flat-fee estimate</div>
           <div class="kpi-chart">
             <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
@@ -3301,7 +3305,7 @@ input, textarea, select { font: inherit; color: inherit; }
             <div class="mod-head">
               <div class="mod-head-titles">
                 <div class="mod-title" id="qaTitle">Quick actions · Today</div>
-                <div class="mod-sub" id="qaSub">7 items needing intervention</div>
+                <div class="mod-sub" id="qaSub">5 items needing intervention</div>
               </div>
               <div class="mod-tools">
                 <button class="select-trigger">Severity <svg width="10" height="10"><use href="#i-chev-down"/></svg></button>
@@ -3309,16 +3313,6 @@ input, textarea, select { font: inherit; color: inherit; }
             </div>
             <div class="mod-body">
               <div class="qa-list" id="qaList">
-                <div class="qa-row" data-context="M-0241 was committed at 09:00. Now 09:18, 22 minutes past the same-day promise. Linear's primary contact is the GC, who has a downstream investor deadline.">
-                  <span class="sev-dot sev-alarm"></span>
-                  <span class="qa-content">
-                    <span class="qa-issue">SLA breach</span>
-                    <span class="qa-sep">·</span>
-                    <span class="qa-target mono">M-0241 · Linear</span>
-                  </span>
-                  <button class="qa-dismiss" aria-label="Dismiss"><svg width="12" height="12"><use href="#i-x"/></svg></button>
-                  <button class="verb" data-toast="Apology + revised ETA sent to Linear contact.">Notify</button>
-                </div>
                 <div class="qa-row" data-context="Petra Lund pinged the Director directly, bypassing assigned lawyer Marcus Chen. Plaid is a $123k MRR account; this is the second escalation this month.">
                   <span class="sev-dot sev-alarm"></span>
                   <span class="qa-content">
@@ -3359,17 +3353,7 @@ input, textarea, select { font: inherit; color: inherit; }
                   <button class="qa-dismiss" aria-label="Dismiss"><svg width="12" height="12"><use href="#i-x"/></svg></button>
                   <button class="verb" data-modal="review">Review</button>
                 </div>
-                <div class="qa-row" data-context="Marcus Chen at 112% utilization, six active matters, two due Friday. Sustainable for a day or two but not a full week.">
-                  <span class="sev-dot sev-watch"></span>
-                  <span class="qa-content">
-                    <span class="qa-issue">Bench overload</span>
-                    <span class="qa-sep">·</span>
-                    <span class="qa-target mono">L-014 · M. Chen</span>
-                  </span>
-                  <button class="qa-dismiss" aria-label="Dismiss"><svg width="12" height="12"><use href="#i-x"/></svg></button>
-                  <button class="verb" data-modal="rebalance">Rebalance</button>
-                </div>
-                <div class="qa-row" data-context="In review for 41 hours. Assigned lawyer is Marcus Chen, who is also bench-overloaded. Nudge clears most stale-review cases within an hour.">
+                <div class="qa-row" data-context="In review for 41 hours. Assigned lawyer is Marcus Chen. Nudge clears most stale-review cases within an hour.">
                   <span class="sev-dot sev-info"></span>
                   <span class="qa-content">
                     <span class="qa-issue">Stale review</span>
@@ -3388,7 +3372,7 @@ input, textarea, select { font: inherit; color: inherit; }
             <div class="mod-head">
               <div class="mod-head-titles">
                 <div class="mod-title">Bench</div>
-                <div class="mod-sub" id="benchSub">22 lawyers · 4 over capacity</div>
+                <div class="mod-sub" id="benchSub">22 lawyers · 2 over capacity</div>
               </div>
               <div class="mod-tools">
                 <button class="select-trigger">Utilization <svg width="10" height="10"><use href="#i-chev-down"/></svg></button>
@@ -3476,7 +3460,7 @@ input, textarea, select { font: inherit; color: inherit; }
               </div>
 
               <div class="bench-footer">
-                <span class="summary">avg util 87% · 4 over cap · 156h booked</span>
+                <span class="summary">avg util 84% · 2 over cap · 144h booked</span>
                 <button class="view-all">View all 22 →</button>
               </div>
             </div>
@@ -3746,7 +3730,7 @@ input, textarea, select { font: inherit; color: inherit; }
           <!-- Avg fee per matter -->
           <div class="kpi">
             <div class="kpi-eyebrow">Avg fee per matter</div>
-            <div class="kpi-value">$5.2k</div>
+            <div class="kpi-value">$1.1k</div>
             <div class="kpi-sub">flat-fee average across delivered matters</div>
             <div class="kpi-chart">
               <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
@@ -3765,8 +3749,8 @@ input, textarea, select { font: inherit; color: inherit; }
 
           <!-- Fees processed -->
           <div class="kpi">
-            <div class="kpi-eyebrow">Fees processed · MTD</div>
-            <div class="kpi-value">58</div>
+            <div class="kpi-eyebrow">Fees processed, MTD</div>
+            <div class="kpi-value">258</div>
             <div class="kpi-sub">flat-fee transactions invoiced</div>
             <div class="kpi-chart">
               <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
@@ -3790,9 +3774,9 @@ input, textarea, select { font: inherit; color: inherit; }
 
           <!-- Bookings · MTD (replaces Days to invoice) -->
           <div class="kpi">
-            <div class="kpi-eyebrow">Bookings · MTD</div>
+            <div class="kpi-eyebrow">Bookings, MTD</div>
             <div class="kpi-value">$321k</div>
-            <div class="kpi-sub">signed work · $37k still in flight</div>
+            <div class="kpi-sub">signed work · 33 matters in flight</div>
             <div class="kpi-chart">
               <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
                 <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$400</text>
@@ -3995,63 +3979,63 @@ input, textarea, select { font: inherit; color: inherit; }
                   <div class="sku-row">
                     <span class="sku-color" style="background: var(--sku-2)"></span>
                     <span class="sku-name">MSA / Commercial</span>
-                    <span class="sku-vol">11</span>
-                    <span class="sku-fee">$7.5k</span>
-                    <span class="sku-rev">$82.5k</span>
-                    <span><div class="sku-share-bar"><div class="fill" style="width: 29%; background: var(--sku-2)"></div></div></span>
+                    <span class="sku-vol">35</span>
+                    <span class="sku-fee">$2.4k</span>
+                    <span class="sku-rev">$84.0k</span>
+                    <span><div class="sku-share-bar"><div class="fill" style="width: 30%; background: var(--sku-2)"></div></div></span>
                     <span class="sku-delta up">▲ 8%</span>
                   </div>
                   <div class="sku-row">
                     <span class="sku-color" style="background: var(--sku-3)"></span>
                     <span class="sku-name">DPA / Privacy</span>
-                    <span class="sku-vol">14</span>
-                    <span class="sku-fee">$5.5k</span>
-                    <span class="sku-rev">$77.0k</span>
-                    <span><div class="sku-share-bar"><div class="fill" style="width: 27%; background: var(--sku-3)"></div></div></span>
+                    <span class="sku-vol">56</span>
+                    <span class="sku-fee">$1.2k</span>
+                    <span class="sku-rev">$67.2k</span>
+                    <span><div class="sku-share-bar"><div class="fill" style="width: 24%; background: var(--sku-3)"></div></div></span>
                     <span class="sku-delta up">▲ 5%</span>
                   </div>
                   <div class="sku-row">
                     <span class="sku-color" style="background: var(--sku-1)"></span>
                     <span class="sku-name">SAFE / Convertibles</span>
-                    <span class="sku-vol">18</span>
-                    <span class="sku-fee">$4.2k</span>
-                    <span class="sku-rev">$75.6k</span>
-                    <span><div class="sku-share-bar"><div class="fill" style="width: 27%; background: var(--sku-1)"></div></div></span>
+                    <span class="sku-vol">68</span>
+                    <span class="sku-fee">$850</span>
+                    <span class="sku-rev">$57.8k</span>
+                    <span><div class="sku-share-bar"><div class="fill" style="width: 20%; background: var(--sku-1)"></div></div></span>
                     <span class="sku-delta up">▲ 12%</span>
                   </div>
                   <div class="sku-row">
                     <span class="sku-color" style="background: var(--sku-4)"></span>
                     <span class="sku-name">Employment review</span>
-                    <span class="sku-vol">9</span>
-                    <span class="sku-fee">$3.0k</span>
-                    <span class="sku-rev">$27.0k</span>
-                    <span><div class="sku-share-bar"><div class="fill" style="width: 9.5%; background: var(--sku-4)"></div></div></span>
+                    <span class="sku-vol">50</span>
+                    <span class="sku-fee">$650</span>
+                    <span class="sku-rev">$32.5k</span>
+                    <span><div class="sku-share-bar"><div class="fill" style="width: 11%; background: var(--sku-4)"></div></div></span>
                     <span class="sku-delta down">▼ 3%</span>
                   </div>
                   <div class="sku-row">
                     <span class="sku-color" style="background: var(--sku-5)"></span>
                     <span class="sku-name">IP / Trademark</span>
-                    <span class="sku-vol">4</span>
-                    <span class="sku-fee">$4.5k</span>
-                    <span class="sku-rev">$18.0k</span>
-                    <span><div class="sku-share-bar"><div class="fill" style="width: 6.3%; background: var(--sku-5)"></div></div></span>
+                    <span class="sku-vol">22</span>
+                    <span class="sku-fee">$1.4k</span>
+                    <span class="sku-rev">$30.8k</span>
+                    <span><div class="sku-share-bar"><div class="fill" style="width: 11%; background: var(--sku-5)"></div></div></span>
                     <span class="sku-delta up">▲ 20%</span>
                   </div>
                   <div class="sku-row">
                     <span class="sku-color" style="background: var(--sku-6)"></span>
                     <span class="sku-name">Misc commercial</span>
-                    <span class="sku-vol">2</span>
-                    <span class="sku-fee">$2.0k</span>
-                    <span class="sku-rev">$4.0k</span>
-                    <span><div class="sku-share-bar"><div class="fill" style="width: 1.4%; background: var(--sku-6)"></div></div></span>
+                    <span class="sku-vol">27</span>
+                    <span class="sku-fee">$400</span>
+                    <span class="sku-rev">$10.8k</span>
+                    <span><div class="sku-share-bar"><div class="fill" style="width: 4%; background: var(--sku-6)"></div></div></span>
                     <span class="sku-delta flat">— flat</span>
                   </div>
                 </div>
                 <div class="sku-foot">
                   <span class="total-label">Total · 6 SKUs</span>
-                  <span class="sku-vol">58</span>
-                  <span class="sku-fee">$4.9k avg</span>
-                  <span class="sku-rev">$284.1k</span>
+                  <span class="sku-vol">258</span>
+                  <span class="sku-fee">$1.1k avg</span>
+                  <span class="sku-rev">$283.1k</span>
                   <span></span>
                   <span class="sku-delta up">▲ 12%</span>
                 </div>
@@ -5998,7 +5982,7 @@ input, textarea, select { font: inherit; color: inherit; }
         </div>
         <div class="kpi">
           <div class="kpi-eyebrow">Avg fee per matter</div>
-          <div class="kpi-value">$5.4k</div>
+          <div class="kpi-value">$1.2k</div>
           <div class="kpi-sub">flat-fee average across delivered matters</div>
           <div class="kpi-chart">
             <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
@@ -6015,8 +5999,8 @@ input, textarea, select { font: inherit; color: inherit; }
           </div>
         </div>
         <div class="kpi">
-          <div class="kpi-eyebrow">Fees processed · MTD</div>
-          <div class="kpi-value">70</div>
+          <div class="kpi-eyebrow">Fees processed, MTD</div>
+          <div class="kpi-value">260</div>
           <div class="kpi-sub">flat-fee transactions invoiced</div>
           <div class="kpi-chart">
             <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
