@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Moritz · Operations</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' fill='none'%3E%3Cellipse cx='100' cy='100' rx='86' ry='92' stroke='%231a1713' stroke-width='6'/%3E%3Cg fill='%231a1713'%3E%3Crect x='56' y='55' width='28' height='6'/%3E%3Crect x='65' y='55' width='10' height='90'/%3E%3Crect x='54' y='139' width='32' height='6'/%3E%3Crect x='116' y='55' width='28' height='6'/%3E%3Crect x='125' y='55' width='10' height='90'/%3E%3Crect x='114' y='139' width='32' height='6'/%3E%3Cpolygon points='75,55 88,55 105,128 95,128'/%3E%3Cpolygon points='112,55 125,55 105,128 95,128'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 220' fill='none'%3E%3Cellipse cx='100' cy='110' rx='84' ry='100' stroke='%231a1713' stroke-width='5'/%3E%3Cg fill='%231a1713'%3E%3Crect x='55' y='62' width='32' height='6'/%3E%3Crect x='113' y='62' width='32' height='6'/%3E%3Crect x='64' y='62' width='10' height='92'/%3E%3Crect x='126' y='62' width='10' height='92'/%3E%3Crect x='53' y='148' width='36' height='6'/%3E%3Crect x='111' y='148' width='36' height='6'/%3E%3Cpolygon points='75,62 89,62 105,142 95,142'/%3E%3Cpolygon points='111,62 125,62 105,142 95,142'/%3E%3C/g%3E%3C/svg%3E">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1801,6 +1801,87 @@ input, textarea, select { font: inherit; color: inherit; }
 .pulse-status.success { color: var(--status-on-track-fg); background: var(--status-on-track-bg); }
 .pulse-status.info { color: var(--muted-foreground); background: var(--accent-3); }
 
+/* Completed-activity dismiss — hover the success/info pill to swap to "Close ✕" */
+.pulse-status.success,
+.pulse-status.info {
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+  border: 0;
+  font-family: inherit;
+  width: 88px;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  transition: filter 80ms ease;
+}
+.pulse-status.success::after,
+.pulse-status.info::after {
+  content: 'Close ✕';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: inherit;
+  font-size: var(--fs-mini);
+  font-family: "Geist Mono", monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 100ms ease;
+}
+.pulse-status.success:hover::after,
+.pulse-status.info:hover::after { opacity: 1; }
+
+/* Dismissed past pulse rows — hidden until reset */
+.pulse-row.pulse-row-dismissed {
+  display: none !important;
+}
+
+/* Mobile: tap module / chart-card head to collapse the body */
+@media (max-width: 1024px) {
+  .module > .mod-head,
+  .chart-card > .chart-head {
+    cursor: pointer;
+    user-select: none;
+    padding-right: 38px !important;
+    position: relative;
+  }
+  .module > .mod-head::after,
+  .chart-card > .chart-head::after {
+    content: '';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    border-right: 1.5px solid var(--muted-foreground);
+    border-bottom: 1.5px solid var(--muted-foreground);
+    transform: translate(0, -75%) rotate(45deg);
+    transition: transform 200ms ease;
+    pointer-events: none;
+  }
+  .module.is-collapsed > .mod-head::after,
+  .chart-card.is-collapsed > .chart-head::after {
+    transform: translate(0, -25%) rotate(-45deg);
+  }
+  .module.is-collapsed > .mod-body,
+  .chart-card.is-collapsed > .chart-body {
+    display: none;
+  }
+  /* When collapsed, also hide module tabs and selects in head — they get cluttered */
+  .module.is-collapsed > .mod-head .mod-tools,
+  .chart-card.is-collapsed > .chart-head .mod-tools,
+  .chart-card.is-collapsed > .chart-head .tabs {
+    display: none;
+  }
+}
+
 /* Grid columns: natural height, no stretch */
 .ws-grid { align-items: start; }
 .fin-grid-2 { align-items: start; }
@@ -1949,30 +2030,56 @@ input, textarea, select { font: inherit; color: inherit; }
   right: 16px;
   bottom: 16px;
   display: flex;
+  flex-direction: row;
+  align-items: center;
   gap: 8px;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 999px;
-  padding: 4px;
+  padding: 4px 4px 4px 14px;
   box-shadow: var(--shadow-sm);
   z-index: 30;
+}
+.float-settings-title {
+  font-family: "Geist Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  font-weight: 500;
+  padding-right: 8px;
+  border-right: 1px solid var(--border);
+  white-space: nowrap;
 }
 .float-settings button {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   height: 28px;
-  padding: 0 10px;
+  min-width: 70px;
+  padding: 0 12px;
   border-radius: 999px;
   font-size: var(--fs-mini);
   color: var(--muted-foreground);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   font-family: "Geist Mono", monospace;
+  white-space: nowrap;
 }
 .float-settings button.active { background: var(--primary); color: var(--primary-foreground); }
 .float-settings .group { display: flex; gap: 2px; }
-.float-settings .group + .group { border-left: 1px solid var(--border); padding-left: 4px; margin-left: 4px; }
+.float-settings .group + .group {
+  border-left: 1px solid var(--border);
+  padding-left: 6px;
+  margin-left: 0;
+}
+
+@media (max-width: 1024px) {
+  .float-settings { flex-wrap: wrap; max-width: calc(100vw - 24px); border-radius: 14px; padding: 10px 12px; }
+  .float-settings-title { width: 100%; border-right: 0; padding-right: 0; padding-bottom: 4px; border-bottom: 1px solid var(--border-1); margin-bottom: 4px; }
+  .float-settings .group + .group { border-left: 0; padding-left: 0; }
+}
 
 .float-settings .tour-action {
   color: var(--foreground);
@@ -3308,6 +3415,60 @@ input, textarea, select { font: inherit; color: inherit; }
         <div class="mod-body">
           <div class="pulse-list">
 
+            <div class="pulse-row" data-pulse="call" data-upcoming="call">
+              <span class="pulse-time">10:30</span>
+              <span class="pulse-icon"><svg><use href="#i-phone"/></svg></span>
+              <div class="pulse-content">
+                <div class="pulse-line"><span class="pulse-actor">Plaid check-in</span> — Petra Lund · 30 min</div>
+                <div class="pulse-meta">A-0017 · post-escalation follow-up · in 40m · Pamir + Director</div>
+              </div>
+              <div class="pulse-action"><button class="verb" data-toast="Joining Plaid check-in.">Join</button></div>
+            </div>
+
+            <div class="pulse-row" data-pulse="deadline" data-upcoming="deadline">
+              <span class="pulse-time">11:00</span>
+              <span class="pulse-icon"><svg><use href="#i-clock"/></svg></span>
+              <div class="pulse-content">
+                <div class="pulse-line"><span class="pulse-actor">Notion DPA</span> delivery committed — <span class="pulse-target">M-0203</span></div>
+                <div class="pulse-meta">Priya Raman · scoped 4h · 3.2h logged · in 70m · on track</div>
+              </div>
+              <div class="pulse-action"><span class="pulse-status">In review</span></div>
+            </div>
+
+            <div class="pulse-row" data-pulse="meeting" data-upcoming="meeting">
+              <span class="pulse-time">13:00</span>
+              <span class="pulse-icon"><svg><use href="#i-users"/></svg></span>
+              <div class="pulse-content">
+                <div class="pulse-line"><span class="pulse-actor">Bench review</span> — Pamir + Director · 30 min</div>
+                <div class="pulse-meta">Weekly sync · L-014 + L-008 rebalance on agenda · in 3h 10m</div>
+              </div>
+              <div class="pulse-action"><button class="verb" data-toast="Bench review opened in calendar.">Open</button></div>
+            </div>
+
+            <div class="pulse-row" data-pulse="deadline" data-upcoming="deadline">
+              <span class="pulse-time">14:30</span>
+              <span class="pulse-icon"><svg><use href="#i-clock"/></svg></span>
+              <div class="pulse-content">
+                <div class="pulse-line"><span class="pulse-actor">Vanta DPA</span> delivery committed — <span class="pulse-target">M-0219</span></div>
+                <div class="pulse-meta">Priya Raman · awaiting AI flag review · in 4h 40m · at risk</div>
+              </div>
+              <div class="pulse-action"><span class="pulse-status">At risk</span></div>
+            </div>
+
+            <div class="pulse-row" data-pulse="call" data-upcoming="call">
+              <span class="pulse-time">16:00</span>
+              <span class="pulse-icon"><svg><use href="#i-phone"/></svg></span>
+              <div class="pulse-content">
+                <div class="pulse-line"><span class="pulse-actor">Replicate scoping</span> — new account intake · 30 min</div>
+                <div class="pulse-meta">Inbound from yesterday · Jonas Kallio lead · in 6h 10m</div>
+              </div>
+              <div class="pulse-action"><button class="verb" data-toast="Replicate scoping joined.">Join</button></div>
+            </div>
+
+            <div class="pulse-now">
+              <span class="pulse-now-marker"><span class="pulse-now-dot"></span>Earlier today · 09:50</span>
+            </div>
+
             <div class="pulse-row" data-pulse="escalation">
               <span class="pulse-time">09:42</span>
               <span class="pulse-icon"><svg><use href="#i-alert"/></svg></span>
@@ -3386,60 +3547,6 @@ input, textarea, select { font: inherit; color: inherit; }
                 <div class="pulse-meta">A-0041 · $84k MRR projected · Series A · IP focus</div>
               </div>
               <div class="pulse-action"><span class="pulse-status info">New</span></div>
-            </div>
-
-            <div class="pulse-now">
-              <span class="pulse-now-marker"><span class="pulse-now-dot"></span>Now · 09:50</span>
-            </div>
-
-            <div class="pulse-row" data-pulse="call" data-upcoming="call">
-              <span class="pulse-time">10:30</span>
-              <span class="pulse-icon"><svg><use href="#i-phone"/></svg></span>
-              <div class="pulse-content">
-                <div class="pulse-line"><span class="pulse-actor">Plaid check-in</span> — Petra Lund · 30 min</div>
-                <div class="pulse-meta">A-0017 · post-escalation follow-up · in 40m · Pamir + Director</div>
-              </div>
-              <div class="pulse-action"><button class="verb" data-toast="Joining Plaid check-in.">Join</button></div>
-            </div>
-
-            <div class="pulse-row" data-pulse="deadline" data-upcoming="deadline">
-              <span class="pulse-time">11:00</span>
-              <span class="pulse-icon"><svg><use href="#i-clock"/></svg></span>
-              <div class="pulse-content">
-                <div class="pulse-line"><span class="pulse-actor">Notion DPA</span> delivery committed — <span class="pulse-target">M-0203</span></div>
-                <div class="pulse-meta">Priya Raman · scoped 4h · 3.2h logged · in 70m · on track</div>
-              </div>
-              <div class="pulse-action"><span class="pulse-status">In review</span></div>
-            </div>
-
-            <div class="pulse-row" data-pulse="meeting" data-upcoming="meeting">
-              <span class="pulse-time">13:00</span>
-              <span class="pulse-icon"><svg><use href="#i-users"/></svg></span>
-              <div class="pulse-content">
-                <div class="pulse-line"><span class="pulse-actor">Bench review</span> — Pamir + Director · 30 min</div>
-                <div class="pulse-meta">Weekly sync · L-014 + L-008 rebalance on agenda · in 3h 10m</div>
-              </div>
-              <div class="pulse-action"><button class="verb" data-toast="Bench review opened in calendar.">Open</button></div>
-            </div>
-
-            <div class="pulse-row" data-pulse="deadline" data-upcoming="deadline">
-              <span class="pulse-time">14:30</span>
-              <span class="pulse-icon"><svg><use href="#i-clock"/></svg></span>
-              <div class="pulse-content">
-                <div class="pulse-line"><span class="pulse-actor">Vanta DPA</span> delivery committed — <span class="pulse-target">M-0219</span></div>
-                <div class="pulse-meta">Priya Raman · awaiting AI flag review · in 4h 40m · at risk</div>
-              </div>
-              <div class="pulse-action"><span class="pulse-status">At risk</span></div>
-            </div>
-
-            <div class="pulse-row" data-pulse="call" data-upcoming="call">
-              <span class="pulse-time">16:00</span>
-              <span class="pulse-icon"><svg><use href="#i-phone"/></svg></span>
-              <div class="pulse-content">
-                <div class="pulse-line"><span class="pulse-actor">Replicate scoping</span> — new account intake · 30 min</div>
-                <div class="pulse-meta">Inbound from yesterday · Jonas Kallio lead · in 6h 10m</div>
-              </div>
-              <div class="pulse-action"><button class="verb" data-toast="Replicate scoping joined.">Join</button></div>
             </div>
 
           </div>
@@ -4403,9 +4510,20 @@ input, textarea, select { font: inherit; color: inherit; }
 
 <!-- ============ FLOATING DEMO CONTROLS ============ -->
 <div class="float-settings">
+  <div class="float-settings-title">Demo controls</div>
   <div class="group" role="group" aria-label="Scenario">
     <button data-scenario="heated" class="active" title="Heated state — current dashboard">Heated</button>
     <button data-scenario="calm" title="Calm state — everything healthy">Calm</button>
+  </div>
+  <div class="group" role="group" aria-label="Theme">
+    <button data-theme="light" class="active" title="Light theme">
+      <svg width="11" height="11" aria-hidden="true"><use href="#i-sun"/></svg>
+      Light
+    </button>
+    <button data-theme="dark" title="Dark theme">
+      <svg width="11" height="11" aria-hidden="true"><use href="#i-moon"/></svg>
+      Dark
+    </button>
   </div>
   <div class="group">
     <button id="replayTourBtn" class="tour-action" aria-label="Replay onboarding tour">
@@ -4413,6 +4531,13 @@ input, textarea, select { font: inherit; color: inherit; }
         <path d="m5 3 14 9-14 9V3z"/>
       </svg>
       Replay tour
+    </button>
+    <button id="resetDashBtn" class="tour-action" aria-label="Reset dismissed items">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 12a9 9 0 0 1-9 9 9 9 0 0 1-9-9 9 9 0 0 1 9-9c2.7 0 5.1 1.2 6.7 3"/>
+        <polyline points="21 3 21 9 15 9"/>
+      </svg>
+      Reset
     </button>
   </div>
 </div>
@@ -5451,6 +5576,50 @@ input, textarea, select { font: inherit; color: inherit; }
       pulseSub: 'Activity past, schedule ahead',
 
       pulseList: `
+        <div class="pulse-row" data-pulse="meeting" data-upcoming="meeting">
+          <span class="pulse-time">15:00</span>
+          <span class="pulse-icon"><svg><use href="#i-users"/></svg></span>
+          <div class="pulse-content">
+            <div class="pulse-line"><span class="pulse-actor">Hanna Berg onboarding</span> — bench intro · 60 min</div>
+            <div class="pulse-meta">L-023 · workflow walkthrough · in 38m</div>
+          </div>
+          <div class="pulse-action"><button class="verb" data-toast="Onboarding session opened.">Open</button></div>
+        </div>
+
+        <div class="pulse-row" data-pulse="call" data-upcoming="call">
+          <span class="pulse-time">15:45</span>
+          <span class="pulse-icon"><svg><use href="#i-phone"/></svg></span>
+          <div class="pulse-content">
+            <div class="pulse-line"><span class="pulse-actor">Notion Q3 renewal</span> — early planning call · 30 min</div>
+            <div class="pulse-meta">A-0019 · proactive · in 1h 23m</div>
+          </div>
+          <div class="pulse-action"><button class="verb" data-toast="Joining Notion call.">Join</button></div>
+        </div>
+
+        <div class="pulse-row" data-pulse="deadline" data-upcoming="deadline">
+          <span class="pulse-time">17:00</span>
+          <span class="pulse-icon"><svg><use href="#i-clock"/></svg></span>
+          <div class="pulse-content">
+            <div class="pulse-line"><span class="pulse-actor">Replicate scoping doc</span> — internal target — <span class="pulse-target">A-0042</span></div>
+            <div class="pulse-meta">Jonas Kallio · 80% drafted · in 2h 38m · ahead</div>
+          </div>
+          <div class="pulse-action"><span class="pulse-status">Drafting</span></div>
+        </div>
+
+        <div class="pulse-row" data-pulse="meeting" data-upcoming="meeting">
+          <span class="pulse-time">Tomorrow · 09:30</span>
+          <span class="pulse-icon"><svg><use href="#i-users"/></svg></span>
+          <div class="pulse-content">
+            <div class="pulse-line"><span class="pulse-actor">Bench review</span> — Pamir + Director · 30 min</div>
+            <div class="pulse-meta">Weekly sync · all clear, mostly hiring follow-ups</div>
+          </div>
+          <div class="pulse-action"><button class="verb" data-toast="Bench review opened.">Open</button></div>
+        </div>
+
+        <div class="pulse-now">
+          <span class="pulse-now-marker"><span class="pulse-now-dot"></span>Earlier today · 14:22</span>
+        </div>
+
         <div class="pulse-row" data-pulse="delivered">
           <span class="pulse-time">14:18</span>
           <span class="pulse-icon"><svg><use href="#i-check"/></svg></span>
@@ -5522,50 +5691,6 @@ input, textarea, select { font: inherit; color: inherit; }
             <div class="pulse-meta">L-023 · 12 years prior · expansion of bench capacity</div>
           </div>
           <div class="pulse-action"><span class="pulse-status info">New</span></div>
-        </div>
-
-        <div class="pulse-now">
-          <span class="pulse-now-marker"><span class="pulse-now-dot"></span>Now · 14:22</span>
-        </div>
-
-        <div class="pulse-row" data-pulse="meeting" data-upcoming="meeting">
-          <span class="pulse-time">15:00</span>
-          <span class="pulse-icon"><svg><use href="#i-users"/></svg></span>
-          <div class="pulse-content">
-            <div class="pulse-line"><span class="pulse-actor">Hanna Berg onboarding</span> — bench intro · 60 min</div>
-            <div class="pulse-meta">L-023 · workflow walkthrough · in 38m</div>
-          </div>
-          <div class="pulse-action"><button class="verb" data-toast="Onboarding session opened.">Open</button></div>
-        </div>
-
-        <div class="pulse-row" data-pulse="call" data-upcoming="call">
-          <span class="pulse-time">15:45</span>
-          <span class="pulse-icon"><svg><use href="#i-phone"/></svg></span>
-          <div class="pulse-content">
-            <div class="pulse-line"><span class="pulse-actor">Notion Q3 renewal</span> — early planning call · 30 min</div>
-            <div class="pulse-meta">A-0019 · proactive · in 1h 23m</div>
-          </div>
-          <div class="pulse-action"><button class="verb" data-toast="Joining Notion call.">Join</button></div>
-        </div>
-
-        <div class="pulse-row" data-pulse="deadline" data-upcoming="deadline">
-          <span class="pulse-time">17:00</span>
-          <span class="pulse-icon"><svg><use href="#i-clock"/></svg></span>
-          <div class="pulse-content">
-            <div class="pulse-line"><span class="pulse-actor">Replicate scoping doc</span> — internal target — <span class="pulse-target">A-0042</span></div>
-            <div class="pulse-meta">Jonas Kallio · 80% drafted · in 2h 38m · ahead</div>
-          </div>
-          <div class="pulse-action"><span class="pulse-status">Drafting</span></div>
-        </div>
-
-        <div class="pulse-row" data-pulse="meeting" data-upcoming="meeting">
-          <span class="pulse-time">Tomorrow · 09:30</span>
-          <span class="pulse-icon"><svg><use href="#i-users"/></svg></span>
-          <div class="pulse-content">
-            <div class="pulse-line"><span class="pulse-actor">Bench review</span> — Pamir + Director · 30 min</div>
-            <div class="pulse-meta">Weekly sync · all clear, mostly hiring follow-ups</div>
-          </div>
-          <div class="pulse-action"><button class="verb" data-toast="Bench review opened.">Open</button></div>
         </div>
       `,
 
@@ -5673,6 +5798,51 @@ input, textarea, select { font: inherit; color: inherit; }
       const saved = localStorage.getItem('moritz.scenario');
       if (saved === 'calm') apply('calm');
     } catch (e) {}
+
+    // Expose for reset
+    window.__moritzApplyScenario = apply;
+  })();
+
+  // Past pulse rows — click the success/info status pill to dismiss the row
+  (function () {
+    document.body.addEventListener('click', (e) => {
+      const status = e.target.closest('.pulse-status.success, .pulse-status.info');
+      if (!status) return;
+      const row = status.closest('.pulse-row');
+      if (row) row.classList.add('pulse-row-dismissed');
+    });
+  })();
+
+  // Mobile: tap module head to collapse / expand the body
+  (function () {
+    const isMobile = () => window.matchMedia('(max-width: 1024px)').matches;
+    document.body.addEventListener('click', (e) => {
+      if (!isMobile()) return;
+      const head = e.target.closest('.module > .mod-head, .chart-card > .chart-head');
+      if (!head) return;
+      // Don't toggle if click was on a button, tab, select, or any interactive child
+      if (e.target.closest('button, .tabs, .select-trigger, [data-acct-tab], a, input, label')) return;
+      const card = head.closest('.module, .chart-card');
+      if (card) card.classList.toggle('is-collapsed');
+    });
+  })();
+
+  // Reset — restore current scenario (rebuilds dashboard, clears dismissals)
+  (function () {
+    const btn = document.getElementById('resetDashBtn');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      const state = document.body.dataset.scenario || 'heated';
+      if (typeof window.__moritzApplyScenario === 'function') {
+        window.__moritzApplyScenario(state);
+      }
+      // Also clear any pulse-row dismissals (in case the scenario has not been switched)
+      document.querySelectorAll('.pulse-row-dismissed').forEach(r => r.classList.remove('pulse-row-dismissed'));
+      // Restore tour seen flag so it can be triggered fresh
+      try { localStorage.removeItem('moritz.tourSeen'); } catch (e) {}
+      // Toast confirmation
+      if (typeof showToast === 'function') showToast('Dashboard reset.');
+    });
   })();
 </script>
 
