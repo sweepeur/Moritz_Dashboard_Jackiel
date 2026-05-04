@@ -19,10 +19,10 @@
    ===================================================== */
 
 :root {
-  /* Surfaces */
-  --general-background: #f4efe6;       /* eggshell ground */
+  /* Surfaces — sourced 1:1 from Figma Moritz-Design-Work tokens */
+  --general-background: #f4efe6;       /* general/background — eggshell ground */
   --background: #ffffff;                /* white surface (top nav) */
-  --card: #f8f3e9;                      /* cream card */
+  --card: #fbf9f4;                      /* card/card — warm off-white */
   --card-foreground: #1a1713;
   --sidebar: #fbf9f4;
   --sidebar-foreground: #6f6657;
@@ -690,8 +690,8 @@ input, textarea, select { font: inherit; color: inherit; }
 .kpi-chart-mini { margin-top: auto; height: 56px; }
 .kpi-chart-mini svg { width: 100%; height: 100%; display: block; }
 
-/* SKU palette */
-.view-finance {
+/* SKU palette — global so charts in any view can use these tokens */
+:root {
   --sku-1: #5a6f80;
   --sku-2: #8a7d6b;
   --sku-3: #6b8466;
@@ -699,7 +699,7 @@ input, textarea, select { font: inherit; color: inherit; }
   --sku-5: #7c5a5e;
   --sku-6: #4a5a6b;
 }
-[data-theme="dark"] .view-finance {
+[data-theme="dark"] {
   --sku-1: #8aa3b8;
   --sku-2: #b5a98e;
   --sku-3: #9bb497;
@@ -1287,6 +1287,10 @@ input, textarea, select { font: inherit; color: inherit; }
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  box-shadow: 0 1px 2px rgba(26, 23, 19, 0.04), 0 1px 3px rgba(26, 23, 19, 0.03);
+}
+[data-theme="dark"] .module {
+  box-shadow: none;
 }
 .mod-head {
   display: flex;
@@ -1586,6 +1590,12 @@ input, textarea, select { font: inherit; color: inherit; }
 }
 .bench-row + .bench-row { border-top: 1px solid var(--border-1); }
 .bench-row:hover { background: var(--accent-3); }
+.bench-row.clickable { cursor: pointer; }
+.bench-row.clickable:hover { background: var(--sla-risk-bg); }
+.bench-row.clickable:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: -2px;
+}
 .bench-row .avatar { margin-top: 2px; flex-shrink: 0; }
 
 .bench-id { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
@@ -1710,6 +1720,12 @@ input, textarea, select { font: inherit; color: inherit; }
   cursor: pointer;
 }
 .bench-footer .view-all:hover { background: var(--accent-3); }
+.bench-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
 
 /* =====================================================
    Revenue chart card — natural height, fixed chart band
@@ -1829,25 +1845,26 @@ input, textarea, select { font: inherit; color: inherit; }
 .rev-sources-meta .dot { width: 6px; height: 6px; border-radius: 999px; display: inline-block; }
 
 /* =====================================================
-   Monthly earnings module — hero stat + sparkline
+   Monthly earnings + Payments — Figma-matched cards
    ===================================================== */
-#opsMonthlyEarnings .mod-body {
+.fig-card .mod-body {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 12px;
   padding-top: 4px;
 }
-.me-icon {
+.fig-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 999px;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
   background: var(--secondary);
   color: var(--muted-foreground);
+  flex-shrink: 0;
 }
-.me-stat {
+.fig-stat {
   font-family: "Fraunces", serif;
   font-size: 32px;
   font-weight: 500;
@@ -1855,123 +1872,107 @@ input, textarea, select { font: inherit; color: inherit; }
   letter-spacing: -0.02em;
   color: var(--foreground);
 }
-.me-delta {
+.fig-delta-row {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-family: "Geist Mono", monospace;
-  font-size: var(--fs-mini);
-  letter-spacing: 0.02em;
-  color: var(--muted-foreground);
+  gap: 8px;
 }
-.me-delta.up { color: var(--status-on-track-fg); }
-.me-delta.down { color: var(--status-sla-risk-fg); }
-.me-delta .arrow { font-size: 10px; line-height: 1; }
-.me-chart {
-  width: 100%;
-  height: 64px;
-  margin-top: 4px;
-}
-.me-chart svg { width: 100%; height: 100%; display: block; }
-
-/* =====================================================
-   Payments module — daily bars + method breakdown
-   ===================================================== */
-#opsPayments .mod-body {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  padding-top: 4px;
-}
-.me-pill {
+.fig-delta-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 8px;
-  border-radius: 999px;
-  background: var(--secondary);
-}
-.me-pill-num {
-  font-family: "Geist Mono", monospace;
+  font-family: "Geist", sans-serif;
   font-size: var(--fs-mini);
   font-weight: 500;
-  color: var(--foreground);
-  letter-spacing: 0.02em;
-}
-.me-pill-delta {
-  font-family: "Geist Mono", monospace;
-  font-size: 10px;
-  color: var(--status-on-track-fg);
-  letter-spacing: 0.02em;
-}
-.payments-bars {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
-  height: 80px;
-  align-items: end;
-}
-.payments-day {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  height: 100%;
-  justify-content: flex-end;
-}
-.payments-day .bar {
-  width: 100%;
-  flex: 1 1 auto;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  background: transparent;
-  border-radius: 4px;
-  overflow: hidden;
-  position: relative;
-}
-.payments-day .fill {
-  width: 100%;
-  border-radius: 4px;
-  display: block;
-  min-height: 2px;
-}
-.payments-day .label {
-  font-family: "Geist Mono", monospace;
-  font-size: 10px;
-  color: var(--muted-foreground);
-  letter-spacing: 0.04em;
-  line-height: 1;
-}
-.payments-methods {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding-top: 10px;
-  border-top: 1px solid var(--border-1);
-}
-.payment-method-row {
-  display: grid;
-  grid-template-columns: 10px 1fr auto;
-  align-items: center;
-  gap: 10px;
-  font-size: var(--fs-sm);
-}
-.pm-dot {
-  width: 8px;
-  height: 8px;
+  letter-spacing: 0;
+  padding: 3px 8px;
   border-radius: 999px;
-  display: inline-block;
 }
-.pm-label {
-  color: var(--foreground);
-  letter-spacing: -0.005em;
+.fig-delta-pill.up {
+  background: var(--status-on-track-bg);
+  color: var(--status-on-track-fg);
 }
-.pm-pct {
-  font-family: "Geist Mono", monospace;
+.fig-delta-pill.down {
+  background: var(--sla-risk-bg);
+  color: var(--status-sla-risk-fg);
+}
+.fig-delta-text {
   font-size: var(--fs-mini);
   color: var(--muted-foreground);
+}
+.fig-wave {
+  width: 100%;
+  margin-top: 6px;
+}
+.fig-wave svg {
+  width: 100%;
+  height: 90px;
+  display: block;
+  overflow: visible;
+}
+
+/* Payments header — title left, big number + delta pill right */
+#opsPayments .mod-head { align-items: flex-start; }
+.fig-head-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.fig-num {
+  font-family: "Fraunces", serif;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+}
+
+/* Payment mix — pie above legend, color-coded keys */
+.fig-pie-block {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+}
+.fig-pie-svg {
+  display: block;
+  width: 160px;
+  height: 160px;
+  margin: 0 auto;
+}
+.fig-pie-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-1);
+}
+.fig-pie-item {
+  display: grid;
+  grid-template-columns: 12px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+.fig-pie-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  display: inline-block;
+  background: var(--swatch);
+}
+.fig-pie-label {
+  color: var(--swatch);
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+.fig-pie-pct {
+  font-family: "Geist Mono", monospace;
+  font-size: var(--fs-mini);
+  color: var(--swatch);
   letter-spacing: 0.02em;
+  text-align: right;
 }
 
 /* =====================================================
@@ -1980,11 +1981,11 @@ input, textarea, select { font: inherit; color: inherit; }
 .pulse-list { display: flex; flex-direction: column; }
 .pulse-row {
   display: grid;
-  grid-template-columns: 56px 32px minmax(0, 1fr) auto;
+  grid-template-columns: 44px 22px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 14px;
-  padding: 12px 8px;
-  font-size: var(--fs-sm);
+  gap: 10px;
+  padding: 7px 6px;
+  font-size: 13px;
   transition: background 80ms ease;
   border-radius: var(--radius-sm);
 }
@@ -1998,15 +1999,15 @@ input, textarea, select { font: inherit; color: inherit; }
   letter-spacing: 0.04em;
 }
 .pulse-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-sm);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
-.pulse-icon svg { width: 14px; height: 14px; }
+.pulse-icon svg { width: 11px; height: 11px; }
 
 .pulse-row[data-pulse="escalation"] .pulse-icon { background: var(--sla-risk-bg); color: var(--status-sla-risk-fg); }
 .pulse-row[data-pulse="sla"] .pulse-icon { background: var(--sla-risk-bg); color: var(--status-sla-risk-fg); }
@@ -2082,11 +2083,11 @@ input, textarea, select { font: inherit; color: inherit; }
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--status-on-track-fg) 18%, transparent);
 }
 
-.pulse-content { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.pulse-content { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
 .pulse-line {
-  font-size: var(--fs-sm);
+  font-size: 13px;
   color: var(--foreground);
-  line-height: 1.35;
+  line-height: 1.3;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2094,16 +2095,17 @@ input, textarea, select { font: inherit; color: inherit; }
 .pulse-actor { font-weight: 500; }
 .pulse-target {
   font-family: "Geist Mono", monospace;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--muted-foreground);
   letter-spacing: 0.02em;
 }
 .pulse-meta {
-  font-size: var(--fs-mini);
+  font-size: 10px;
   color: var(--muted-foreground);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.2;
 }
 
 .pulse-action { flex-shrink: 0; min-width: 96px; display: inline-flex; justify-content: flex-end; }
@@ -2482,26 +2484,31 @@ input, textarea, select { font: inherit; color: inherit; }
   .kpi-strip { grid-template-columns: 1fr 1fr; }
   .view-finance .kpi-strip { grid-template-columns: 1fr 1fr; }
   .fin-grid-2 { grid-template-columns: 1fr; }
-  /* SKU table — hide vol and avg fee columns on narrow screens */
+  /* SKU table — hide vol, avg fee, and share-bar columns on narrow screens */
   .sku-table {
-    grid-template-columns: 10px 1fr 1fr 50px;
-    gap: 8px;
+    grid-template-columns: 10px 1fr auto 50px;
+    gap: 6px 10px;
     font-size: 12px;
   }
   .sku-table .head:nth-child(3),
   .sku-table .head:nth-child(4),
+  .sku-table .head:nth-child(6),
   .sku-vol,
   .sku-fee {
     display: none;
   }
+  .sku-row > span:nth-child(6) { display: none; }
+  .sku-rev { text-align: right; }
   .sku-foot {
-    grid-template-columns: 10px 1fr 1fr 50px;
-    gap: 8px;
+    grid-template-columns: 10px 1fr auto 50px;
+    gap: 6px 10px;
   }
   .sku-foot > .sku-vol,
   .sku-foot > .sku-fee {
     display: none;
   }
+  .sku-foot > span:nth-child(5) { display: none; } /* empty share-bar placeholder */
+  .sku-foot .total-label { grid-column: 1 / 3; }
   /* Funnel — tighten gaps */
   .funnel-row { grid-template-columns: 90px 1fr 50px 44px; gap: 8px; }
   .funnel-stage { font-size: 11px; }
@@ -3525,7 +3532,11 @@ input, textarea, select { font: inherit; color: inherit; }
               </div>
             </div>
             <div class="mod-body" id="benchBody">
-              <div class="bench-row" data-s="overcap">
+              <div class="bench-row clickable" data-s="overcap" data-modal="rebalance"
+                   data-lawyer-name="Marcus Chen" data-lawyer-id="L-014" data-lawyer-util="112%"
+                   data-lawyer-target="94%" data-lawyer-receiver="Priya Raman" data-lawyer-receiver-util="68%"
+                   data-lawyer-receiver-target="86%" role="button" tabindex="0"
+                   aria-label="Rebalance Marcus Chen, currently at 112% utilization">
                 <div class="avatar">MC</div>
                 <div class="bench-id">
                   <div class="name-row">
@@ -3545,7 +3556,11 @@ input, textarea, select { font: inherit; color: inherit; }
                 </div>
               </div>
 
-              <div class="bench-row" data-s="overcap">
+              <div class="bench-row clickable" data-s="overcap" data-modal="rebalance"
+                   data-lawyer-name="Priya Raman" data-lawyer-id="L-008" data-lawyer-util="108%"
+                   data-lawyer-target="92%" data-lawyer-receiver="Ella Hoffmann" data-lawyer-receiver-util="72%"
+                   data-lawyer-receiver-target="88%" role="button" tabindex="0"
+                   aria-label="Rebalance Priya Raman, currently at 108% utilization">
                 <div class="avatar">PR</div>
                 <div class="bench-id">
                   <div class="name-row">
@@ -3606,7 +3621,7 @@ input, textarea, select { font: inherit; color: inherit; }
               </div>
 
               <div class="bench-footer">
-                <span class="summary">avg util 84% · 2 over cap · 144h booked</span>
+                <span class="summary">avg util 84% · 2 over cap · 144h booked · click an over-cap row to rebalance</span>
                 <button class="view-all">View all 22 →</button>
               </div>
             </div>
@@ -3636,63 +3651,85 @@ input, textarea, select { font: inherit; color: inherit; }
           </div>
 
           <!-- Monthly earnings -->
-          <div class="module" id="opsMonthlyEarnings" data-highlight-target="revenue">
+          <div class="module fig-card" id="opsMonthlyEarnings" data-highlight-target="revenue">
             <div class="mod-head">
               <div class="mod-head-titles">
                 <div class="mod-title">Monthly earnings</div>
               </div>
-              <div class="mod-tools">
-                <span class="me-icon" aria-hidden="true">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                </span>
-              </div>
+              <span class="fig-icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M14.5 9.5h-3a2 2 0 1 0 0 4h1a2 2 0 1 1 0 4h-3M12 7v10"/></svg>
+              </span>
             </div>
             <div class="mod-body">
-              <div class="me-stat">$284k</div>
-              <div class="me-delta up"><span class="arrow">▲</span> 12% than last year</div>
-              <div class="me-chart">
-                <svg viewBox="0 0 320 80" preserveAspectRatio="none" aria-label="Monthly earnings line">
-                  <path d="M0 56 C28 32, 56 64, 84 44 S140 24, 168 40 S224 16, 252 32 S308 12, 320 20"
-                        fill="none" stroke="var(--sku-1)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+              <div class="fig-stat">$284k</div>
+              <div class="fig-delta-row">
+                <span class="fig-delta-pill up">+12%</span>
+                <span class="fig-delta-text">than last year</span>
+              </div>
+              <div class="fig-wave">
+                <svg viewBox="0 0 520 130" preserveAspectRatio="none" aria-label="Monthly earnings line">
+                  <defs>
+                    <linearGradient id="figWaveFill" x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="0%" stop-color="var(--sku-1)" stop-opacity="0.22"/>
+                      <stop offset="100%" stop-color="var(--sku-1)" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M0 86 C45 86, 70 30, 130 30 S215 86, 260 86 S345 36, 390 36 S475 86, 520 86 L520 130 L0 130 Z"
+                        fill="url(#figWaveFill)"/>
+                  <path d="M0 86 C45 86, 70 30, 130 30 S215 86, 260 86 S345 36, 390 36 S475 86, 520 86"
+                        fill="none" stroke="var(--foreground)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
                 </svg>
               </div>
             </div>
           </div>
 
           <!-- Payments -->
-          <div class="module" id="opsPayments">
+          <div class="module fig-card" id="opsPayments">
             <div class="mod-head">
               <div class="mod-head-titles">
                 <div class="mod-title">Payments</div>
-                <div class="mod-sub">Last 7 days</div>
+                <div class="mod-sub">Last 30 days · 258 received</div>
               </div>
-              <div class="mod-tools">
-                <div class="me-pill">
-                  <span class="me-pill-num">258</span>
-                  <span class="me-pill-delta">▲ 18%</span>
-                </div>
+              <div class="fig-head-stat">
+                <span class="fig-delta-pill up">+18%</span>
               </div>
             </div>
             <div class="mod-body">
-              <div class="payments-bars">
-                <div class="payments-day"><div class="bar"><span class="fill" style="height: 60%; background: var(--sku-1);"></span></div><span class="label">M</span></div>
-                <div class="payments-day"><div class="bar"><span class="fill" style="height: 78%; background: var(--sku-1);"></span></div><span class="label">T</span></div>
-                <div class="payments-day"><div class="bar"><span class="fill" style="height: 82%; background: var(--sku-1);"></span></div><span class="label">W</span></div>
-                <div class="payments-day"><div class="bar"><span class="fill" style="height: 68%; background: var(--sku-1);"></span></div><span class="label">T</span></div>
-                <div class="payments-day"><div class="bar"><span class="fill" style="height: 94%; background: var(--sku-1);"></span></div><span class="label">F</span></div>
-                <div class="payments-day"><div class="bar"><span class="fill" style="height: 22%; background: var(--sku-1); opacity: 0.5;"></span></div><span class="label">S</span></div>
-                <div class="payments-day"><div class="bar"><span class="fill" style="height: 12%; background: var(--sku-1); opacity: 0.5;"></span></div><span class="label">S</span></div>
-              </div>
-              <div class="payments-methods">
-                <div class="payment-method-row">
-                  <span class="pm-dot" style="background: var(--sku-1)"></span>
-                  <span class="pm-label">ACH</span>
-                  <span class="pm-pct">78%</span>
-                </div>
-                <div class="payment-method-row">
-                  <span class="pm-dot" style="background: var(--sku-3)"></span>
-                  <span class="pm-label">Wire</span>
-                  <span class="pm-pct">22%</span>
+              <div class="fig-pie-block">
+                <svg class="fig-pie-svg" viewBox="-60 -60 120 120" role="img"
+                     aria-label="Invoice 52 percent, Bank card 31 percent, PayPal 17 percent">
+                  <g stroke="var(--card)" stroke-width="2" stroke-linejoin="round">
+                    <!-- Invoice 52% -->
+                    <path d="M 0 0 L 0 -50 A 50 50 0 1 1 -6.27 49.61 Z" fill="var(--sku-1)"/>
+                    <!-- Bank card 31% -->
+                    <path d="M 0 0 L -6.27 49.61 A 50 50 0 0 1 -43.8 -24.18 Z" fill="var(--sku-5)"/>
+                    <!-- PayPal 17% -->
+                    <path d="M 0 0 L -43.8 -24.18 A 50 50 0 0 1 0 -50 Z" fill="var(--sku-3)"/>
+                  </g>
+                  <g font-family="Geist, system-ui, sans-serif" font-weight="500" font-size="13"
+                     fill="#ffffff" text-anchor="middle" dominant-baseline="middle">
+                    <text x="30" y="2">52%</text>
+                    <text x="-27" y="14">31%</text>
+                    <text x="-15" y="-26">17%</text>
+                  </g>
+                </svg>
+                <div class="fig-pie-legend">
+                  <div class="fig-pie-item" style="--swatch: var(--sku-1);">
+                    <span class="fig-pie-dot"></span>
+                    <span class="fig-pie-label">Invoice</span>
+                    <span class="fig-pie-pct">52%</span>
+                  </div>
+                  <div class="fig-pie-item" style="--swatch: var(--sku-5);">
+                    <span class="fig-pie-dot"></span>
+                    <span class="fig-pie-label">Bank card</span>
+                    <span class="fig-pie-pct">31%</span>
+                  </div>
+                  <div class="fig-pie-item" style="--swatch: var(--sku-3);">
+                    <span class="fig-pie-dot"></span>
+                    <span class="fig-pie-label">PayPal</span>
+                    <span class="fig-pie-pct">17%</span>
+                  </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -4762,9 +4799,9 @@ input, textarea, select { font: inherit; color: inherit; }
   <div class="modal-card" data-modal="rebalance" role="dialog" aria-modal="true" aria-labelledby="rebalanceTitle">
     <div class="modal-head">
       <div class="modal-titles">
-        <span class="modal-eyebrow"><span class="sev-dot sev-watch"></span>Bench overload · L-014</span>
-        <h3 class="modal-title" id="rebalanceTitle">Rebalance Marcus Chen</h3>
-        <p class="modal-sub">Currently 112% utilization. Move two matters to bring under capacity by Thursday.</p>
+        <span class="modal-eyebrow"><span class="sev-dot sev-watch"></span>Bench overload · <span data-rb-id>L-014</span></span>
+        <h3 class="modal-title" id="rebalanceTitle">Rebalance <span data-rb-name>Marcus Chen</span></h3>
+        <p class="modal-sub">Currently <span data-rb-util>112%</span> utilization. Move two matters to bring under capacity by Thursday.</p>
       </div>
       <button class="modal-close" data-close-modal aria-label="Close"><svg width="14" height="14"><use href="#i-x"/></svg></button>
     </div>
@@ -4799,24 +4836,24 @@ input, textarea, select { font: inherit; color: inherit; }
       <div>
         <div class="field-label">Move to</div>
         <div class="lawyer-pick">
-          <div class="avatar">PR</div>
+          <div class="avatar" data-rb-receiver-initials>PR</div>
           <div>
-            <div class="name">Priya Raman</div>
-            <div class="specialty">Privacy · Compliance</div>
+            <div class="name" data-rb-receiver>Priya Raman</div>
+            <div class="specialty" data-rb-receiver-spec>Privacy · Compliance</div>
           </div>
-          <span class="util">68% util</span>
+          <span class="util"><span data-rb-receiver-util>68%</span> util</span>
         </div>
       </div>
       <div>
         <div class="field-label">Impact</div>
         <div class="impact-panel">
           <div class="col">
-            <span class="label">Marcus Chen</span>
-            <span class="val">112% <span class="arrow">→</span> <span class="target">94%</span></span>
+            <span class="label" data-rb-name>Marcus Chen</span>
+            <span class="val"><span data-rb-util>112%</span> <span class="arrow">→</span> <span class="target" data-rb-target>94%</span></span>
           </div>
           <div class="col">
-            <span class="label">Priya Raman</span>
-            <span class="val">68% <span class="arrow">→</span> 86%</span>
+            <span class="label" data-rb-receiver>Priya Raman</span>
+            <span class="val"><span data-rb-receiver-util>68%</span> <span class="arrow">→</span> <span data-rb-receiver-target>86%</span></span>
           </div>
           <div class="col">
             <span class="label">Bench mean</span>
@@ -5047,11 +5084,34 @@ input, textarea, select { font: inherit; color: inherit; }
     if (!stage) return;
     const cards = stage.querySelectorAll('.modal-card');
 
+    const initials = (full) => full.split(/\s+/).map(p => p[0]).slice(0, 2).join('').toUpperCase();
+    const SPECIALTY = {
+      'Marcus Chen': 'SaaS · Commercial',
+      'Priya Raman': 'Privacy · Compliance',
+      'Ella Hoffmann': 'IP · Trademarks',
+      'Jonas Kallio': 'Employment',
+    };
+
     const open = (name, ctx) => {
       cards.forEach(c => c.classList.toggle('active', c.dataset.modal === name));
       // Inject account name for schedule modal if provided
       if (name === 'schedule' && ctx && ctx.account) {
         stage.querySelectorAll('[data-account-name]').forEach(n => n.textContent = ctx.account);
+      }
+      // Inject lawyer-specific values for rebalance modal
+      if (name === 'rebalance' && ctx && ctx.lawyer) {
+        const l = ctx.lawyer;
+        const card = stage.querySelector('[data-modal="rebalance"]');
+        const setAll = (sel, val) => card.querySelectorAll(sel).forEach(n => n.textContent = val);
+        setAll('[data-rb-name]', l.name);
+        setAll('[data-rb-id]', l.id);
+        setAll('[data-rb-util]', l.util);
+        setAll('[data-rb-target]', l.target);
+        setAll('[data-rb-receiver]', l.receiver);
+        setAll('[data-rb-receiver-util]', l.receiverUtil);
+        setAll('[data-rb-receiver-target]', l.receiverTarget);
+        setAll('[data-rb-receiver-initials]', initials(l.receiver));
+        setAll('[data-rb-receiver-spec]', SPECIALTY[l.receiver] || '');
       }
       stage.classList.add('open');
       stage.setAttribute('aria-hidden', 'false');
@@ -5063,16 +5123,38 @@ input, textarea, select { font: inherit; color: inherit; }
       document.body.style.overflow = '';
     };
 
+    const ctxFromOpener = (opener) => {
+      const ctx = { account: opener.dataset.account };
+      if (opener.dataset.lawyerName) {
+        ctx.lawyer = {
+          name: opener.dataset.lawyerName,
+          id: opener.dataset.lawyerId,
+          util: opener.dataset.lawyerUtil,
+          target: opener.dataset.lawyerTarget,
+          receiver: opener.dataset.lawyerReceiver,
+          receiverUtil: opener.dataset.lawyerReceiverUtil,
+          receiverTarget: opener.dataset.lawyerReceiverTarget,
+        };
+      }
+      return ctx;
+    };
+
     document.body.addEventListener('click', (e) => {
       const opener = e.target.closest('[data-modal]');
       if (opener && !e.target.closest('.modal-card')) {
         // Don't double-trigger when clicking inside an already-open modal
         const name = opener.dataset.modal;
-        const account = opener.dataset.account;
-        open(name, { account });
+        open(name, ctxFromOpener(opener));
         e.stopPropagation();
       }
       if (e.target.closest('[data-close-modal]')) close();
+    });
+    document.body.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      const opener = e.target.closest('[data-modal][role="button"]');
+      if (!opener) return;
+      e.preventDefault();
+      open(opener.dataset.modal, ctxFromOpener(opener));
     });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && stage.classList.contains('open')) close(); });
 
