@@ -1829,6 +1829,152 @@ input, textarea, select { font: inherit; color: inherit; }
 .rev-sources-meta .dot { width: 6px; height: 6px; border-radius: 999px; display: inline-block; }
 
 /* =====================================================
+   Monthly earnings module — hero stat + sparkline
+   ===================================================== */
+#opsMonthlyEarnings .mod-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 4px;
+}
+.me-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--secondary);
+  color: var(--muted-foreground);
+}
+.me-stat {
+  font-family: "Fraunces", serif;
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+}
+.me-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: "Geist Mono", monospace;
+  font-size: var(--fs-mini);
+  letter-spacing: 0.02em;
+  color: var(--muted-foreground);
+}
+.me-delta.up { color: var(--status-on-track-fg); }
+.me-delta.down { color: var(--status-sla-risk-fg); }
+.me-delta .arrow { font-size: 10px; line-height: 1; }
+.me-chart {
+  width: 100%;
+  height: 64px;
+  margin-top: 4px;
+}
+.me-chart svg { width: 100%; height: 100%; display: block; }
+
+/* =====================================================
+   Payments module — daily bars + method breakdown
+   ===================================================== */
+#opsPayments .mod-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 4px;
+}
+.me-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--secondary);
+}
+.me-pill-num {
+  font-family: "Geist Mono", monospace;
+  font-size: var(--fs-mini);
+  font-weight: 500;
+  color: var(--foreground);
+  letter-spacing: 0.02em;
+}
+.me-pill-delta {
+  font-family: "Geist Mono", monospace;
+  font-size: 10px;
+  color: var(--status-on-track-fg);
+  letter-spacing: 0.02em;
+}
+.payments-bars {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  height: 80px;
+  align-items: end;
+}
+.payments-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+  justify-content: flex-end;
+}
+.payments-day .bar {
+  width: 100%;
+  flex: 1 1 auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: transparent;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+.payments-day .fill {
+  width: 100%;
+  border-radius: 4px;
+  display: block;
+  min-height: 2px;
+}
+.payments-day .label {
+  font-family: "Geist Mono", monospace;
+  font-size: 10px;
+  color: var(--muted-foreground);
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+.payments-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-1);
+}
+.payment-method-row {
+  display: grid;
+  grid-template-columns: 10px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--fs-sm);
+}
+.pm-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  display: inline-block;
+}
+.pm-label {
+  color: var(--foreground);
+  letter-spacing: -0.005em;
+}
+.pm-pct {
+  font-family: "Geist Mono", monospace;
+  font-size: var(--fs-mini);
+  color: var(--muted-foreground);
+  letter-spacing: 0.02em;
+}
+
+/* =====================================================
    Pulse feed — bottom activity stream
    ===================================================== */
 .pulse-list { display: flex; flex-direction: column; }
@@ -3489,95 +3635,65 @@ input, textarea, select { font: inherit; color: inherit; }
             </div>
           </div>
 
-          <!-- Revenue chart -->
-          <div class="chart-card" id="opsRevenueCard" data-highlight-target="revenue">
-            <div class="chart-head">
-              <div class="titles">
-                <div class="mod-title">Revenue · this week</div>
-                <div class="mod-sub">Actual vs forecast · $48k of $52k target</div>
+          <!-- Monthly earnings -->
+          <div class="module" id="opsMonthlyEarnings" data-highlight-target="revenue">
+            <div class="mod-head">
+              <div class="mod-head-titles">
+                <div class="mod-title">Monthly earnings</div>
               </div>
               <div class="mod-tools">
-                <div class="tabs">
-                  <button class="tab active">1w</button>
-                  <button class="tab">4w</button>
-                  <button class="tab">FY</button>
-                  <button class="tab">YTD</button>
+                <span class="me-icon" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                </span>
+              </div>
+            </div>
+            <div class="mod-body">
+              <div class="me-stat">$284k</div>
+              <div class="me-delta up"><span class="arrow">▲</span> 12% than last year</div>
+              <div class="me-chart">
+                <svg viewBox="0 0 320 80" preserveAspectRatio="none" aria-label="Monthly earnings line">
+                  <path d="M0 56 C28 32, 56 64, 84 44 S140 24, 168 40 S224 16, 252 32 S308 12, 320 20"
+                        fill="none" stroke="var(--sku-1)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payments -->
+          <div class="module" id="opsPayments">
+            <div class="mod-head">
+              <div class="mod-head-titles">
+                <div class="mod-title">Payments</div>
+                <div class="mod-sub">Last 7 days</div>
+              </div>
+              <div class="mod-tools">
+                <div class="me-pill">
+                  <span class="me-pill-num">258</span>
+                  <span class="me-pill-delta">▲ 18%</span>
                 </div>
               </div>
             </div>
-            <div class="chart-body">
-              <div class="chart-svg-wrap">
-                <svg viewBox="0 0 320 200" preserveAspectRatio="none" aria-label="Revenue chart">
-                  <!-- gridlines -->
-                  <g stroke="var(--border)" stroke-width="0.5">
-                    <line x1="0" y1="40" x2="320" y2="40"/>
-                    <line x1="0" y1="80" x2="320" y2="80"/>
-                    <line x1="0" y1="120" x2="320" y2="120"/>
-                    <line x1="0" y1="160" x2="320" y2="160"/>
-                  </g>
-                  <!-- forecast (dashed) -->
-                  <path d="M0 130 L40 122 L80 116 L120 110 L160 102 L200 92 L240 82 L280 70 L320 58"
-                        fill="none" stroke="var(--muted-foreground)" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.6"/>
-                  <!-- actual -->
-                  <path d="M0 134 L40 128 L80 110 L120 118 L160 96 L200 84 L240 90 L280 72 L320 60"
-                        fill="none" stroke="var(--foreground)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
-                  <!-- area -->
-                  <path d="M0 134 L40 128 L80 110 L120 118 L160 96 L200 84 L240 90 L280 72 L320 60 L320 200 L0 200 Z"
-                        fill="var(--foreground)" opacity="0.04"/>
-                  <!-- annotations: SLA breach marker -->
-                  <g>
-                    <line x1="200" y1="60" x2="200" y2="84" stroke="var(--status-sla-risk-fg)" stroke-width="1" stroke-dasharray="2 2"/>
-                    <circle cx="200" cy="84" r="3" fill="var(--status-sla-risk-fg)"/>
-                    <text x="200" y="55" text-anchor="middle" font-family="Geist Mono" font-size="8" fill="var(--status-sla-risk-fg)" letter-spacing="0.04em">SLA breach</text>
-                  </g>
-                  <!-- end-of-line marker -->
-                  <line x1="318" y1="54" x2="322" y2="66" stroke="var(--foreground)" stroke-width="2" stroke-linecap="round"/>
-                </svg>
+            <div class="mod-body">
+              <div class="payments-bars">
+                <div class="payments-day"><div class="bar"><span class="fill" style="height: 60%; background: var(--sku-1);"></span></div><span class="label">M</span></div>
+                <div class="payments-day"><div class="bar"><span class="fill" style="height: 78%; background: var(--sku-1);"></span></div><span class="label">T</span></div>
+                <div class="payments-day"><div class="bar"><span class="fill" style="height: 82%; background: var(--sku-1);"></span></div><span class="label">W</span></div>
+                <div class="payments-day"><div class="bar"><span class="fill" style="height: 68%; background: var(--sku-1);"></span></div><span class="label">T</span></div>
+                <div class="payments-day"><div class="bar"><span class="fill" style="height: 94%; background: var(--sku-1);"></span></div><span class="label">F</span></div>
+                <div class="payments-day"><div class="bar"><span class="fill" style="height: 22%; background: var(--sku-1); opacity: 0.5;"></span></div><span class="label">S</span></div>
+                <div class="payments-day"><div class="bar"><span class="fill" style="height: 12%; background: var(--sku-1); opacity: 0.5;"></span></div><span class="label">S</span></div>
               </div>
-              <div class="chart-legend">
-                <span><span class="legend-swatch" style="background:var(--foreground)"></span>Actual</span>
-                <span><span class="legend-swatch" style="background:var(--muted-foreground); opacity:0.6"></span>Forecast</span>
-                <span><span class="legend-swatch" style="background:var(--status-sla-risk-fg)"></span>Incident</span>
-              </div>
-
-              <!-- Sub-stats: bookings → delivered → invoiced → margin -->
-              <div class="rev-stats">
-                <div class="rev-stat">
-                  <span class="label">Bookings</span>
-                  <span class="value">$48k</span>
-                  <span class="delta up">▲ 6%</span>
+              <div class="payments-methods">
+                <div class="payment-method-row">
+                  <span class="pm-dot" style="background: var(--sku-1)"></span>
+                  <span class="pm-label">ACH</span>
+                  <span class="pm-pct">78%</span>
                 </div>
-                <div class="rev-stat">
-                  <span class="label">Delivered</span>
-                  <span class="value">$42k</span>
-                  <span class="delta up">▲ 12%</span>
+                <div class="payment-method-row">
+                  <span class="pm-dot" style="background: var(--sku-3)"></span>
+                  <span class="pm-label">Wire</span>
+                  <span class="pm-pct">22%</span>
                 </div>
-                <div class="rev-stat">
-                  <span class="label">Invoiced</span>
-                  <span class="value">$38k</span>
-                  <span class="delta up">▲ 8%</span>
-                </div>
-                <div class="rev-stat">
-                  <span class="label">Margin</span>
-                  <span class="value">31%</span>
-                  <span class="delta down">▼ 2.3pt</span>
-                </div>
-              </div>
-
-              <!-- Pulse: this week's revenue source mix -->
-              <div class="rev-sources">
-                <div style="width: 32%; background: #5a6f80" title="MSA / Commercial · $15.4k"></div>
-                <div style="width: 26%; background: #6b8466" title="DPA / Privacy · $12.5k"></div>
-                <div style="width: 20%; background: #8a7d6b" title="SAFE · $9.6k"></div>
-                <div style="width: 12%; background: #a98a64" title="Employment · $5.8k"></div>
-                <div style="width: 10%; background: #7c5a5e" title="Other · $4.7k"></div>
-              </div>
-              <div class="rev-sources-meta">
-                <span class="item"><span class="dot" style="background:#5a6f80"></span>MSA 32%</span>
-                <span class="item"><span class="dot" style="background:#6b8466"></span>DPA 26%</span>
-                <span class="item"><span class="dot" style="background:#8a7d6b"></span>SAFE 20%</span>
-                <span class="item"><span class="dot" style="background:#a98a64"></span>Empl. 12%</span>
-                <span class="item"><span class="dot" style="background:#7c5a5e"></span>Other 10%</span>
               </div>
             </div>
           </div>
@@ -5047,9 +5163,9 @@ input, textarea, select { font: inherit; color: inherit; }
         sub: '$48k of $52k target',
         yMax: 12000,
         yLabels: ['$12k', '$6k', '$0'],
-        xLabels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        actual: [7500, 9200, 8800, 7000, 9500, 4000, 2000],
-        forecast: [7800, 8000, 8200, 8400, 8600, 5000, 3000],
+        xLabels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+        actual: [9000, 10500, 9500, 8500, 10500],
+        forecast: [9500, 9800, 10200, 10500, 11000],
       },
       '4w': {
         title: 'Revenue · last 4 weeks',
@@ -5093,7 +5209,6 @@ input, textarea, select { font: inherit; color: inherit; }
       const linePath = (vals) => vals.map((v, i) => `${i === 0 ? 'M' : 'L'} ${xAt(i, vals.length).toFixed(1)} ${yAt(v).toFixed(1)}`).join(' ');
       const actualPath = linePath(d.actual);
       const forecastPath = linePath(d.forecast);
-      const areaPath = actualPath + ` L ${xAt(d.actual.length - 1, d.actual.length).toFixed(1)} ${(PAD_T + innerH).toFixed(1)} L ${PAD_L} ${(PAD_T + innerH).toFixed(1)} Z`;
 
       const grid = d.yLabels.map((_, i) => {
         const yp = PAD_T + (i / (d.yLabels.length - 1)) * innerH;
@@ -5111,22 +5226,18 @@ input, textarea, select { font: inherit; color: inherit; }
         return `<text x="${xp}" y="${H - 6}" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)" text-anchor="middle">${l}</text>`;
       }).join('');
 
-      // Data-point dots on actual line
-      const dots = d.actual.map((v, i) => `<circle cx="${xAt(i, d.actual.length)}" cy="${yAt(v)}" r="2" fill="var(--foreground)"/>`).join('');
-
       const lastIdx = d.actual.length - 1;
-      const endTickX = xAt(lastIdx, d.actual.length);
-      const endTickY = yAt(d.actual[lastIdx]);
+      const lastX = xAt(lastIdx, d.actual.length);
+      const lastY = yAt(d.actual[lastIdx]);
 
       return `
         <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-label="Revenue chart">
           ${grid}
           ${yLabels}
-          <path d="${areaPath}" fill="var(--foreground)" opacity="0.04"/>
-          <path d="${forecastPath}" fill="none" stroke="var(--muted-foreground)" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.6"/>
-          <path d="${actualPath}" fill="none" stroke="var(--foreground)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
-          ${dots}
-          <line x1="${endTickX - 3}" y1="${endTickY - 5}" x2="${endTickX + 3}" y2="${endTickY + 5}" stroke="var(--foreground)" stroke-width="2" stroke-linecap="round"/>
+          <path d="${forecastPath}" fill="none" stroke="var(--muted-foreground)" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.55"/>
+          <path d="${actualPath}" fill="none" stroke="var(--foreground)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+          <circle cx="${lastX}" cy="${lastY}" r="3.5" fill="var(--foreground)"/>
+          <circle cx="${lastX}" cy="${lastY}" r="1.5" fill="var(--card)"/>
           ${xLabels}
         </svg>
       `;
