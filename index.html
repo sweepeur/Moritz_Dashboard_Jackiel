@@ -119,15 +119,15 @@
   --lh-h3: 28.8px;
 
   /* Density: compact (default per memory feedback) */
-  --row-h: 32px;
-  --module-pad: 16px;
-  --section-gap: 16px;
+  --row-h: 30px;
+  --module-pad: 14px;
+  --section-gap: 18px;
 }
 
 [data-density="comfortable"] {
   --row-h: 44px;
-  --module-pad: 24px;
-  --section-gap: 24px;
+  --module-pad: 22px;
+  --section-gap: 22px;
 }
 
 [data-theme="dark"] {
@@ -220,8 +220,8 @@ input, textarea, select { font: inherit; color: inherit; }
 .h-lede {
   font-family: "Fraunces", serif;
   font-weight: 500;
-  font-size: 30px;
-  line-height: 1.2;
+  font-size: 24px;
+  line-height: 1.25;
   letter-spacing: -0.018em;
   color: var(--foreground);
 }
@@ -994,6 +994,106 @@ input, textarea, select { font: inherit; color: inherit; }
   letter-spacing: 0.02em;
 }
 
+/* Margin by SKU — horizontal bars */
+.margin-bars { display: flex; flex-direction: column; }
+.margin-row {
+  display: grid;
+  grid-template-columns: 150px 1fr 44px;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+.margin-row + .margin-row { border-top: 1px solid var(--border-1); }
+.margin-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--foreground);
+}
+.margin-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+.margin-bar {
+  height: 8px;
+  background: var(--secondary);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.margin-bar .fill { height: 100%; border-radius: 999px; }
+.margin-pct {
+  font-family: "Geist Mono", monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--foreground);
+  text-align: right;
+}
+
+/* Receivables aging — stacked bar + bucket rows */
+.aging-stacked {
+  display: flex;
+  height: 14px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--secondary);
+  margin-bottom: 14px;
+}
+.aging-segment { height: 100%; }
+.aging-rows { display: flex; flex-direction: column; }
+.aging-row {
+  display: grid;
+  grid-template-columns: 1fr 60px 40px;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  font-size: 13px;
+}
+.aging-row + .aging-row { border-top: 1px solid var(--border-1); }
+.aging-bucket {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+.aging-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+.aging-amount {
+  font-family: "Geist Mono", monospace;
+  font-weight: 500;
+  text-align: right;
+}
+.aging-share {
+  font-family: "Geist Mono", monospace;
+  font-size: 11px;
+  color: var(--muted-foreground);
+  text-align: right;
+}
+
+/* Module footer stats — small mono summary line */
+.module-foot-stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-1);
+  font-size: 10px;
+  color: var(--muted-foreground);
+  font-family: "Geist Mono", monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.module-foot-stats .sep { opacity: 0.4; }
+
 /* Pipeline funnel */
 .funnel { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
 .funnel-row {
@@ -1029,6 +1129,75 @@ input, textarea, select { font: inherit; color: inherit; }
 }
 .funnel-conv.lossy { color: var(--status-margin-watch-fg); }
 
+/* KPI shrink toggle — floats at top-right of the KPI strip */
+.kpi-strip { position: relative; }
+.kpi-shrink-btn {
+  position: absolute;
+  top: -10px;
+  right: 0;
+  font-family: "Geist Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--background);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: background 80ms ease, color 80ms ease, border-color 80ms ease;
+  z-index: 2;
+  height: 22px;
+}
+.kpi-shrink-btn:hover {
+  color: var(--foreground);
+  border-color: var(--muted-foreground);
+}
+.kpi-shrink-btn svg {
+  opacity: 0.7;
+  transition: transform 200ms ease;
+}
+.kpi-shrink-btn[data-state="compact"] svg {
+  transform: rotate(180deg);
+}
+
+/* Compact mode — hide charts but keep a brief one-line description */
+.kpi-strip.is-compact .kpi {
+  min-height: 96px;
+  padding: 12px 14px;
+}
+.kpi-strip.is-compact .kpi.hero {
+  padding: 14px 16px;
+}
+.kpi-strip.is-compact .kpi-value {
+  font-size: 26px;
+  margin-top: 2px;
+}
+.kpi-strip.is-compact .kpi.hero .kpi-value {
+  font-size: 32px;
+  margin-top: 4px;
+}
+.kpi-strip.is-compact .kpi-sub {
+  font-size: 10px;
+  line-height: 1.4;
+  margin-top: 4px;
+  max-width: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: unset;
+  display: block;
+}
+.kpi-strip.is-compact .kpi-chart,
+.kpi-strip.is-compact .kpi-chart-mini,
+.kpi-strip.is-compact .kpi-bar,
+.kpi-strip.is-compact .kpi-bar-meta {
+  display: none;
+}
+
 /* =====================================================
    KPI strip — dense layout, charts dominate
    ===================================================== */
@@ -1042,14 +1211,14 @@ input, textarea, select { font: inherit; color: inherit; }
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 14px 16px 12px;
+  padding: 12px 14px 10px;
   display: flex;
   flex-direction: column;
-  min-height: 180px;
+  min-height: 148px;
   transition: border-color 100ms ease;
   overflow: hidden;
 }
-.kpi.hero { padding: 16px 18px 12px; }
+.kpi.hero { padding: 14px 16px 10px; }
 .kpi:hover { border-color: var(--muted-foreground); }
 .kpi-eyebrow {
   font-size: var(--fs-mini);
@@ -1062,15 +1231,15 @@ input, textarea, select { font: inherit; color: inherit; }
 .kpi-value {
   font-family: "Fraunces", serif;
   font-weight: 500;
-  font-size: 34px;
+  font-size: 28px;
   line-height: 1.05;
   letter-spacing: -0.025em;
   color: var(--foreground);
   margin-top: 2px;
 }
 .kpi.hero .kpi-value {
-  font-size: 48px;
-  line-height: 0.98;
+  font-size: 38px;
+  line-height: 1;
   margin-top: 4px;
 }
 .kpi-value.down { color: var(--status-sla-risk-fg); }
@@ -1097,8 +1266,8 @@ input, textarea, select { font: inherit; color: inherit; }
 .kpi-chart {
   flex: 1;
   width: 100%;
-  min-height: 80px;
-  margin-top: 10px;
+  min-height: 60px;
+  margin-top: 8px;
   display: flex;
   align-items: stretch;
 }
@@ -1123,7 +1292,7 @@ input, textarea, select { font: inherit; color: inherit; }
   padding: var(--module-pad) var(--module-pad) var(--space-xs);
 }
 .mod-head-titles { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.mod-title { font-family: "Fraunces", serif; font-weight: 600; font-size: var(--fs-md); line-height: 22px; letter-spacing: -0.01em; color: var(--foreground); }
+.mod-title { font-family: "Fraunces", serif; font-weight: 600; font-size: 15px; line-height: 20px; letter-spacing: -0.01em; color: var(--foreground); }
 .mod-sub { font-size: var(--fs-mini); line-height: var(--lh-mini); color: var(--muted-foreground); }
 .mod-tools { display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0; }
 
@@ -1882,10 +2051,27 @@ input, textarea, select { font: inherit; color: inherit; }
   }
 }
 
-/* Grid columns: natural height, no stretch */
+/* Grid columns */
 .ws-grid { align-items: start; }
-.fin-grid-2 { align-items: start; }
-.fin-grid-2 > .col { display: flex; flex-direction: column; gap: var(--space-md); }
+.fin-grid-2 {
+  align-items: stretch;
+}
+.fin-grid-2 > .col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  min-width: 0;
+}
+.fin-grid-2 > .col > .module:last-child {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+.fin-grid-2 > .col > .module:last-child > .mod-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
 
 /* =====================================================
    Right rail
@@ -2997,12 +3183,18 @@ input, textarea, select { font: inherit; color: inherit; }
       </section>
 
       <!-- KPI strip -->
-      <section class="kpi-strip">
+      <section class="kpi-strip is-compact" id="opsKpiStrip">
+        <button class="kpi-shrink-btn" data-shrink-target="opsKpiStrip" title="Toggle KPI detail">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="18 15 12 9 6 15"/>
+          </svg>
+          <span class="label">Compact</span>
+        </button>
         <!-- Hero: On-time delivery -->
         <div class="kpi hero">
-          <div class="kpi-eyebrow">On-time delivery, 7 days</div>
+          <div class="kpi-eyebrow">On-time delivery · 7 days</div>
           <div class="kpi-value">94%</div>
-          <div class="kpi-sub">of 218 matters delivered within their committed turnaround. <span class="arrow">▲ 1.8</span> vs prior week. The same-day promise is holding.</div>
+          <div class="kpi-sub">matters delivered within committed turnaround</div>
           <div class="kpi-chart">
             <svg viewBox="0 0 600 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M0 78 L40 76 L80 70 L120 66 L160 64 L200 58 L240 55 L280 52 L320 46 L360 42 L400 38 L440 33 L480 28 L520 24 L560 18 L598 14"
@@ -3014,9 +3206,9 @@ input, textarea, select { font: inherit; color: inherit; }
 
         <!-- Untouched -->
         <div class="kpi">
-          <div class="kpi-eyebrow">Untouched</div>
+          <div class="kpi-eyebrow">Untouched matters</div>
           <div class="kpi-value">6</div>
-          <div class="kpi-sub">oldest 38m</div>
+          <div class="kpi-sub">no activity in &gt; 4 hours</div>
           <div class="kpi-chart">
             <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
               <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">12</text>
@@ -3036,7 +3228,7 @@ input, textarea, select { font: inherit; color: inherit; }
         <div class="kpi">
           <div class="kpi-eyebrow">Over capacity</div>
           <div class="kpi-value">4</div>
-          <div class="kpi-sub">of 22 lawyers</div>
+          <div class="kpi-sub">lawyers above 100% utilization</div>
           <div class="kpi-chart">
             <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
               <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">6</text>
@@ -3056,7 +3248,7 @@ input, textarea, select { font: inherit; color: inherit; }
         <div class="kpi">
           <div class="kpi-eyebrow">Fee margin · wk</div>
           <div class="kpi-value down">−2.3%</div>
-          <div class="kpi-sub">behind estimate</div>
+          <div class="kpi-sub">vs flat-fee estimate</div>
           <div class="kpi-chart">
             <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
               <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">+3</text>
@@ -3074,20 +3266,25 @@ input, textarea, select { font: inherit; color: inherit; }
 
         <!-- Revenue -->
         <div class="kpi">
-          <div class="kpi-eyebrow">Revenue · wk</div>
-          <div class="kpi-value">$284k</div>
-          <div class="kpi-sub">9% above target</div>
+          <div class="kpi-eyebrow">AI lift · wk</div>
+          <div class="kpi-value">84h</div>
+          <div class="kpi-sub">lawyer hours saved by AI redline + drafting</div>
           <div class="kpi-chart">
             <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
-              <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$300</text>
-              <text x="0" y="50" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$250</text>
-              <text x="0" y="86" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$200</text>
-              <line x1="32" y1="10" x2="200" y2="10" stroke="var(--border)" stroke-dasharray="2 3"/>
-              <line x1="32" y1="46" x2="200" y2="46" stroke="var(--border)" stroke-dasharray="2 3"/>
-              <line x1="32" y1="82" x2="200" y2="82" stroke="var(--border)"/>
-              <path d="M36 70 L58 60 L80 55 L102 48 L124 50 L146 35 L168 28 L188 22 L196 18"
-                    fill="none" stroke="var(--chart-blue, #5a6f80)" stroke-width="1.5" stroke-linejoin="round"/>
-              <line x1="194" y1="14" x2="198" y2="26" stroke="var(--foreground)" stroke-width="2" stroke-linecap="round"/>
+              <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">120h</text>
+              <text x="2" y="50" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">60h</text>
+              <text x="2" y="86" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">0</text>
+              <line x1="26" y1="10" x2="200" y2="10" stroke="var(--border)" stroke-dasharray="2 3"/>
+              <line x1="26" y1="46" x2="200" y2="46" stroke="var(--border)" stroke-dasharray="2 3"/>
+              <line x1="26" y1="82" x2="200" y2="82" stroke="var(--border)"/>
+              <rect x="30" y="56" width="14" height="26" fill="var(--sku-1)" opacity="0.55"/>
+              <rect x="50" y="50" width="14" height="32" fill="var(--sku-1)" opacity="0.6"/>
+              <rect x="70" y="44" width="14" height="38" fill="var(--sku-1)" opacity="0.7"/>
+              <rect x="90" y="40" width="14" height="42" fill="var(--sku-1)" opacity="0.75"/>
+              <rect x="110" y="36" width="14" height="46" fill="var(--sku-1)" opacity="0.85"/>
+              <rect x="130" y="32" width="14" height="50" fill="var(--sku-1)" opacity="0.9"/>
+              <rect x="150" y="28" width="14" height="54" fill="var(--sku-1)"/>
+              <rect x="170" y="24" width="14" height="58" fill="var(--foreground)"/>
             </svg>
           </div>
         </div>
@@ -3528,23 +3725,29 @@ input, textarea, select { font: inherit; color: inherit; }
         </section>
 
         <!-- KPI strip (4-up for finance) -->
-        <section class="kpi-strip">
+        <section class="kpi-strip is-compact" id="finKpiStrip">
+          <button class="kpi-shrink-btn" data-shrink-target="finKpiStrip" title="Toggle KPI detail">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="18 15 12 9 6 15"/>
+            </svg>
+            <span class="label">Compact</span>
+          </button>
           <!-- Hero: Net revenue with target progress -->
           <div class="kpi hero">
             <div class="kpi-eyebrow">Net revenue · MTD</div>
             <div class="kpi-value">$284k</div>
-            <div class="kpi-sub"><span class="arrow">▲ $30k</span> vs prior month · 92% to $310k target</div>
+            <div class="kpi-sub">delivered + invoiced · 92% to $310k target</div>
             <div style="margin-top: auto; padding-top: 14px;">
               <div class="kpi-bar"><div class="fill" style="width: 92%"></div></div>
               <div class="kpi-bar-meta"><span>$0</span><span>$310k target</span></div>
             </div>
           </div>
 
-          <!-- Avg matter value -->
+          <!-- Avg fee per matter -->
           <div class="kpi">
-            <div class="kpi-eyebrow">Avg matter value</div>
+            <div class="kpi-eyebrow">Avg fee per matter</div>
             <div class="kpi-value">$5.2k</div>
-            <div class="kpi-sub"><span class="arrow">▲ $340</span> vs prior · mix shifting up</div>
+            <div class="kpi-sub">flat-fee average across delivered matters</div>
             <div class="kpi-chart">
               <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
                 <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$6k</text>
@@ -3560,11 +3763,11 @@ input, textarea, select { font: inherit; color: inherit; }
             </div>
           </div>
 
-          <!-- Matters delivered -->
+          <!-- Fees processed -->
           <div class="kpi">
-            <div class="kpi-eyebrow">Matters delivered</div>
+            <div class="kpi-eyebrow">Fees processed · MTD</div>
             <div class="kpi-value">58</div>
-            <div class="kpi-sub"><span class="arrow">▲ 7</span> vs prior · run-rate 692/yr</div>
+            <div class="kpi-sub">flat-fee transactions invoiced</div>
             <div class="kpi-chart">
               <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
                 <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">60</text>
@@ -3589,7 +3792,7 @@ input, textarea, select { font: inherit; color: inherit; }
           <div class="kpi">
             <div class="kpi-eyebrow">Bookings · MTD</div>
             <div class="kpi-value">$321k</div>
-            <div class="kpi-sub"><span class="arrow">▲ $42k</span> vs prior · $37k in flight, 12 matters</div>
+            <div class="kpi-sub">signed work · $37k still in flight</div>
             <div class="kpi-chart">
               <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
                 <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$400</text>
@@ -3854,6 +4057,57 @@ input, textarea, select { font: inherit; color: inherit; }
                 </div>
               </div>
             </div>
+
+            <!-- Margin by SKU -->
+            <div class="module">
+              <div class="mod-head">
+                <div class="mod-head-titles">
+                  <div class="mod-title">Margin by SKU</div>
+                  <div class="mod-sub">Flat fee minus loaded cost · which products earn most</div>
+                </div>
+              </div>
+              <div class="mod-body">
+                <div class="margin-bars">
+                  <div class="margin-row">
+                    <span class="margin-label"><span class="margin-dot" style="background: var(--sku-1)"></span>SAFE / Convertibles</span>
+                    <div class="margin-bar"><div class="fill" style="width: 80%; background: var(--sku-1);"></div></div>
+                    <span class="margin-pct">32%</span>
+                  </div>
+                  <div class="margin-row">
+                    <span class="margin-label"><span class="margin-dot" style="background: var(--sku-3)"></span>DPA / Privacy</span>
+                    <div class="margin-bar"><div class="fill" style="width: 70%; background: var(--sku-3);"></div></div>
+                    <span class="margin-pct">28%</span>
+                  </div>
+                  <div class="margin-row">
+                    <span class="margin-label"><span class="margin-dot" style="background: var(--sku-5)"></span>IP / Trademark</span>
+                    <div class="margin-bar"><div class="fill" style="width: 60%; background: var(--sku-5);"></div></div>
+                    <span class="margin-pct">24%</span>
+                  </div>
+                  <div class="margin-row">
+                    <span class="margin-label"><span class="margin-dot" style="background: var(--sku-2)"></span>MSA / Commercial</span>
+                    <div class="margin-bar"><div class="fill" style="width: 52%; background: var(--sku-2);"></div></div>
+                    <span class="margin-pct">21%</span>
+                  </div>
+                  <div class="margin-row">
+                    <span class="margin-label"><span class="margin-dot" style="background: var(--sku-6)"></span>Misc commercial</span>
+                    <div class="margin-bar"><div class="fill" style="width: 45%; background: var(--sku-6);"></div></div>
+                    <span class="margin-pct">18%</span>
+                  </div>
+                  <div class="margin-row">
+                    <span class="margin-label"><span class="margin-dot" style="background: var(--sku-4)"></span>Employment review</span>
+                    <div class="margin-bar"><div class="fill" style="width: 35%; background: var(--sku-4);"></div></div>
+                    <span class="margin-pct">14%</span>
+                  </div>
+                </div>
+                <div class="module-foot-stats">
+                  <span>Avg margin · 24%</span>
+                  <span class="sep">·</span>
+                  <span>Highest · SAFE</span>
+                  <span class="sep">·</span>
+                  <span>Lowest · Employment</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- Right col: top accounts + pipeline -->
@@ -4021,6 +4275,110 @@ input, textarea, select { font: inherit; color: inherit; }
                 </div>
 
               </div>
+            </div>
+
+            <!-- Receivables · aging -->
+            <div class="module">
+              <div class="mod-head">
+                <div class="mod-head-titles">
+                  <div class="mod-title">Receivables · aging</div>
+                  <div class="mod-sub">$264k outstanding · is the cash going to come in</div>
+                </div>
+              </div>
+              <div class="mod-body">
+                <div class="aging-stacked">
+                  <div class="aging-segment" style="width: 84%; background: var(--status-on-track-fg);" title="0-30: $223k"></div>
+                  <div class="aging-segment" style="width: 12%; background: var(--status-margin-watch-fg);" title="30-60: $32k"></div>
+                  <div class="aging-segment" style="width: 4%; background: var(--status-sla-risk-fg);" title="60+: $9k"></div>
+                </div>
+                <div class="aging-rows">
+                  <div class="aging-row">
+                    <span class="aging-bucket"><span class="aging-dot" style="background: var(--status-on-track-fg)"></span>0–30 days</span>
+                    <span class="aging-amount">$223k</span>
+                    <span class="aging-share">84%</span>
+                  </div>
+                  <div class="aging-row">
+                    <span class="aging-bucket"><span class="aging-dot" style="background: var(--status-margin-watch-fg)"></span>30–60 days</span>
+                    <span class="aging-amount">$32k</span>
+                    <span class="aging-share">12%</span>
+                  </div>
+                  <div class="aging-row">
+                    <span class="aging-bucket"><span class="aging-dot" style="background: var(--status-sla-risk-fg)"></span>60+ days</span>
+                    <span class="aging-amount">$9k</span>
+                    <span class="aging-share">4%</span>
+                  </div>
+                </div>
+                <div class="module-foot-stats">
+                  <span>DSO · 18 days</span>
+                  <span class="sep">·</span>
+                  <span>Oldest · Plaid · 67 days</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Bookings vs Revenue cumulative (full width) -->
+        <section class="module">
+          <div class="mod-head">
+            <div class="mod-head-titles">
+              <div class="mod-title">Bookings vs revenue · trailing 6 months</div>
+              <div class="mod-sub">Cumulative signed work vs delivered work · backlog is the gap</div>
+            </div>
+            <div class="mod-tools">
+              <div class="tabs">
+                <button class="tab active">6M</button>
+                <button class="tab">12M</button>
+                <button class="tab">YTD</button>
+              </div>
+            </div>
+          </div>
+          <div class="mod-body">
+            <div style="position: relative; width: 100%; height: 220px;">
+              <svg viewBox="0 0 800 220" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: 100%; display: block;">
+                <!-- Y axis labels -->
+                <text x="0" y="22" font-family="Geist Mono" font-size="10" fill="var(--muted-foreground)">$1.8M</text>
+                <text x="0" y="80" font-family="Geist Mono" font-size="10" fill="var(--muted-foreground)">$1.2M</text>
+                <text x="0" y="140" font-family="Geist Mono" font-size="10" fill="var(--muted-foreground)">$600k</text>
+                <text x="0" y="200" font-family="Geist Mono" font-size="10" fill="var(--muted-foreground)">$0</text>
+
+                <!-- Gridlines -->
+                <line x1="42" y1="20" x2="800" y2="20" stroke="var(--border)" stroke-dasharray="2 3"/>
+                <line x1="42" y1="80" x2="800" y2="80" stroke="var(--border)" stroke-dasharray="2 3"/>
+                <line x1="42" y1="140" x2="800" y2="140" stroke="var(--border)" stroke-dasharray="2 3"/>
+                <line x1="42" y1="200" x2="800" y2="200" stroke="var(--border)"/>
+
+                <!-- Gap fill (backlog) — between bookings and revenue lines -->
+                <path d="M 50 178 L 175 174 L 300 165 L 425 159 L 550 152 L 675 144 L 800 132 L 800 153 L 675 165 L 550 175 L 425 187 L 300 197 L 175 200 L 50 200 Z" fill="var(--status-on-track-bg)" opacity="0.55"/>
+
+                <!-- Revenue cumulative line (lower, foreground) -->
+                <path d="M 50 200 L 175 200 L 300 197 L 425 187 L 550 175 L 675 165 L 800 153" fill="none" stroke="var(--foreground)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+                <!-- Bookings cumulative line (upper, slate-blue) -->
+                <path d="M 50 178 L 175 174 L 300 165 L 425 159 L 550 152 L 675 144 L 800 132" fill="none" stroke="var(--sku-1)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+
+                <!-- End markers -->
+                <circle cx="800" cy="132" r="3" fill="var(--sku-1)"/>
+                <circle cx="800" cy="153" r="3" fill="var(--foreground)"/>
+
+                <!-- X axis labels -->
+                <text x="50" y="218" font-family="Geist Mono" font-size="10" fill="var(--muted-foreground)" text-anchor="start">Dec</text>
+                <text x="175" y="218" font-family="Geist Mono" font-size="10" fill="var(--muted-foreground)" text-anchor="middle">Jan</text>
+                <text x="300" y="218" font-family="Geist Mono" font-size="10" fill="var(--muted-foreground)" text-anchor="middle">Feb</text>
+                <text x="425" y="218" font-family="Geist Mono" font-size="10" fill="var(--muted-foreground)" text-anchor="middle">Mar</text>
+                <text x="550" y="218" font-family="Geist Mono" font-size="10" fill="var(--muted-foreground)" text-anchor="middle">Apr</text>
+                <text x="675" y="218" font-family="Geist Mono" font-size="10" fill="var(--muted-foreground)" text-anchor="middle">May</text>
+                <text x="800" y="218" font-family="Geist Mono" font-size="10" fill="var(--muted-foreground)" text-anchor="end">Now</text>
+              </svg>
+            </div>
+            <div class="chart-legend" style="padding-top: 12px;">
+              <span><span class="legend-swatch" style="background:var(--sku-1)"></span>Bookings cumulative · $1.67M</span>
+              <span><span class="legend-swatch" style="background:var(--foreground)"></span>Revenue cumulative · $1.40M</span>
+              <span><span class="legend-swatch" style="background:var(--status-on-track-bg)"></span>Backlog · $270k average</span>
+            </div>
+            <div class="module-foot-stats" style="margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border-1);">
+              <span>Backlog growing · committed work outpaces delivery</span>
+              <span class="sep">·</span>
+              <span>Healthy at this scale</span>
             </div>
           </div>
         </section>
@@ -5419,19 +5777,25 @@ input, textarea, select { font: inherit; color: inherit; }
           </div>
         </div>
         <div class="kpi">
-          <div class="kpi-eyebrow">Revenue · wk</div>
-          <div class="kpi-value">$312k</div>
-          <div class="kpi-sub">12% above target</div>
+          <div class="kpi-eyebrow">AI lift · wk</div>
+          <div class="kpi-value">102h</div>
+          <div class="kpi-sub">lawyer hours saved by AI redline + drafting</div>
           <div class="kpi-chart">
             <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
-              <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$320</text>
-              <text x="0" y="50" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$260</text>
-              <text x="0" y="86" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$200</text>
-              <line x1="32" y1="10" x2="200" y2="10" stroke="var(--border)" stroke-dasharray="2 3"/>
-              <line x1="32" y1="46" x2="200" y2="46" stroke="var(--border)" stroke-dasharray="2 3"/>
-              <line x1="32" y1="82" x2="200" y2="82" stroke="var(--border)"/>
-              <path d="M36 70 L58 60 L80 50 L102 42 L124 36 L146 28 L168 22 L188 16 L196 12" fill="none" stroke="var(--chart-blue, #5a6f80)" stroke-width="1.5" stroke-linejoin="round"/>
-              <line x1="194" y1="6" x2="198" y2="18" stroke="var(--foreground)" stroke-width="2" stroke-linecap="round"/>
+              <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">120h</text>
+              <text x="2" y="50" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">60h</text>
+              <text x="2" y="86" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">0</text>
+              <line x1="26" y1="10" x2="200" y2="10" stroke="var(--border)" stroke-dasharray="2 3"/>
+              <line x1="26" y1="46" x2="200" y2="46" stroke="var(--border)" stroke-dasharray="2 3"/>
+              <line x1="26" y1="82" x2="200" y2="82" stroke="var(--border)"/>
+              <rect x="30" y="48" width="14" height="34" fill="var(--sku-1)" opacity="0.55"/>
+              <rect x="50" y="42" width="14" height="40" fill="var(--sku-1)" opacity="0.6"/>
+              <rect x="70" y="36" width="14" height="46" fill="var(--sku-1)" opacity="0.7"/>
+              <rect x="90" y="32" width="14" height="50" fill="var(--sku-1)" opacity="0.75"/>
+              <rect x="110" y="26" width="14" height="56" fill="var(--sku-1)" opacity="0.85"/>
+              <rect x="130" y="22" width="14" height="60" fill="var(--sku-1)" opacity="0.9"/>
+              <rect x="150" y="16" width="14" height="66" fill="var(--sku-1)"/>
+              <rect x="170" y="10" width="14" height="72" fill="var(--foreground)"/>
             </svg>
           </div>
         </div>
@@ -5633,9 +5997,9 @@ input, textarea, select { font: inherit; color: inherit; }
           </div>
         </div>
         <div class="kpi">
-          <div class="kpi-eyebrow">Avg matter value</div>
+          <div class="kpi-eyebrow">Avg fee per matter</div>
           <div class="kpi-value">$5.4k</div>
-          <div class="kpi-sub"><span class="arrow">▲ $520</span> vs prior · Series mix lifting the average</div>
+          <div class="kpi-sub">flat-fee average across delivered matters</div>
           <div class="kpi-chart">
             <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
               <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$6k</text>
@@ -5651,9 +6015,9 @@ input, textarea, select { font: inherit; color: inherit; }
           </div>
         </div>
         <div class="kpi">
-          <div class="kpi-eyebrow">Matters delivered</div>
-          <div class="kpi-value">64</div>
-          <div class="kpi-sub"><span class="arrow">▲ 13</span> vs prior · run-rate 765/yr</div>
+          <div class="kpi-eyebrow">Fees processed · MTD</div>
+          <div class="kpi-value">70</div>
+          <div class="kpi-sub">flat-fee transactions invoiced</div>
           <div class="kpi-chart">
             <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
               <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">70</text>
@@ -5715,6 +6079,36 @@ input, textarea, select { font: inherit; color: inherit; }
 
     // Expose for reset
     window.__moritzApplyScenario = apply;
+  })();
+
+  // KPI shrink toggle — collapse the KPI strip to value-only / restore charts
+  (function () {
+    document.querySelectorAll('.kpi-shrink-btn').forEach(btn => {
+      const id = btn.dataset.shrinkTarget;
+      const strip = document.getElementById(id);
+      if (!strip) return;
+      const labelEl = btn.querySelector('.label');
+
+      function setState(compact) {
+        strip.classList.toggle('is-compact', compact);
+        btn.dataset.state = compact ? 'compact' : 'expanded';
+        if (labelEl) labelEl.textContent = compact ? 'Expand' : 'Compact';
+      }
+
+      // Default to compact unless explicitly expanded by the user previously
+      let initialCompact = true;
+      try {
+        const saved = localStorage.getItem(`moritz.kpi.${id}`);
+        if (saved === 'expanded') initialCompact = false;
+      } catch (e) {}
+      setState(initialCompact);
+
+      btn.addEventListener('click', () => {
+        const next = !strip.classList.contains('is-compact');
+        setState(next);
+        try { localStorage.setItem(`moritz.kpi.${id}`, next ? 'compact' : 'expanded'); } catch (e) {}
+      });
+    });
   })();
 
   // Past pulse rows — click the success/info status pill to dismiss the row
