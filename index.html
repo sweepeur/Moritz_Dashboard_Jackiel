@@ -4,6 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Moritz · Operations</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' fill='none'%3E%3Cellipse cx='100' cy='100' rx='86' ry='92' stroke='%231a1713' stroke-width='6'/%3E%3Cg fill='%231a1713'%3E%3Crect x='56' y='55' width='28' height='6'/%3E%3Crect x='65' y='55' width='10' height='90'/%3E%3Crect x='54' y='139' width='32' height='6'/%3E%3Crect x='116' y='55' width='28' height='6'/%3E%3Crect x='125' y='55' width='10' height='90'/%3E%3Crect x='114' y='139' width='32' height='6'/%3E%3Cpolygon points='75,55 88,55 105,128 95,128'/%3E%3Cpolygon points='112,55 125,55 105,128 95,128'/%3E%3C/g%3E%3C/svg%3E">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -913,6 +914,86 @@ input, textarea, select { font: inherit; color: inherit; }
   text-transform: uppercase;
 }
 
+/* Top accounts — toggle between Revenue and Matters mode */
+[data-mode="rev"] .when-matters { display: none; }
+[data-mode="matters"] .when-rev { display: none; }
+
+/* Pipeline · acquisition view */
+.pipe-section { margin-top: 4px; }
+.pipe-section + .pipe-section {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-1);
+}
+.pipe-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+.pipe-section-head .label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+  color: var(--muted-foreground);
+}
+.pipe-section-head .meta {
+  font-family: "Geist Mono", monospace;
+  font-size: 10px;
+  color: var(--muted-foreground);
+  letter-spacing: 0.02em;
+}
+
+.source-row {
+  display: grid;
+  grid-template-columns: 130px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+.source-row + .source-row { border-top: 1px solid var(--border-1); }
+.source-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--foreground);
+}
+.source-dot {
+  width: 8px; height: 8px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+.source-bar {
+  height: 8px;
+  background: var(--secondary);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.source-bar .fill { height: 100%; border-radius: 999px; }
+.source-stats {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-shrink: 0;
+  min-width: 96px;
+}
+.source-stats .rev {
+  font-family: "Geist Mono", monospace;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--foreground);
+}
+.source-stats .meta {
+  font-size: 10px;
+  color: var(--muted-foreground);
+  font-family: "Geist Mono", monospace;
+  letter-spacing: 0.02em;
+}
+
 /* Pipeline funnel */
 .funnel { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
 .funnel-row {
@@ -1619,6 +1700,67 @@ input, textarea, select { font: inherit; color: inherit; }
   background: transparent;
   color: var(--foreground);
   border: 1px dashed var(--border);
+}
+
+/* Upcoming pulse rows — schedule items rendered after the NOW marker */
+.pulse-row[data-upcoming] .pulse-icon {
+  background: transparent;
+  border: 1px dashed var(--border);
+  color: var(--muted-foreground);
+}
+.pulse-row[data-upcoming] .pulse-time {
+  color: var(--foreground);
+  font-weight: 500;
+}
+.pulse-row[data-upcoming] .pulse-line {
+  color: var(--foreground);
+}
+.pulse-row[data-upcoming="meeting"] .pulse-icon,
+.pulse-row[data-upcoming="call"] .pulse-icon {
+  background: var(--info-bg);
+  border-style: solid;
+  border-color: transparent;
+  color: var(--foreground);
+}
+.pulse-row[data-upcoming="deadline"] .pulse-icon {
+  background: var(--margin-watch-bg);
+  border-style: solid;
+  border-color: transparent;
+  color: var(--status-margin-watch-fg);
+}
+
+/* NOW divider between past and upcoming */
+.pulse-now {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 4px 12px;
+  font-family: "Geist Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--status-on-track-fg);
+  font-weight: 500;
+}
+.pulse-now::before,
+.pulse-now::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--status-on-track-fg);
+  opacity: 0.35;
+}
+.pulse-now-marker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.pulse-now-marker .pulse-now-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--status-on-track-fg);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--status-on-track-fg) 18%, transparent);
 }
 
 .pulse-content { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
@@ -2647,6 +2789,8 @@ input, textarea, select { font: inherit; color: inherit; }
     <symbol id="i-sparkle" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 13.5 9 21 10.5 13.5 12 12 19 10.5 12 3 10.5 10.5 9 12 2zM5 16l.7 2.3L8 19l-2.3.7L5 22l-.7-2.3L2 19l2.3-.7L5 16zM19 4l.5 1.5L21 6l-1.5.5L19 8l-.5-1.5L17 6l1.5-.5L19 4z"/></symbol>
     <symbol id="i-user-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></symbol>
     <symbol id="i-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></symbol>
     <symbol id="i-line" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12c2.5-3 4.5-3 6 0s3.5 5 6 2 4-6 6-3"/></symbol>
   </defs>
 </svg>
@@ -3153,19 +3297,12 @@ input, textarea, select { font: inherit; color: inherit; }
         </div>
       </section>
 
-      <!-- Pulse — firm activity stream -->
+      <!-- Pulse — firm activity stream + schedule -->
       <section class="module" id="pulseModule">
         <div class="mod-head">
           <div class="mod-head-titles">
-            <div class="mod-title">Pulse · today</div>
-            <div class="mod-sub" id="pulseSub">Filings, calls, signatures, onboardings — the firm's activity</div>
-          </div>
-          <div class="mod-tools">
-            <div class="tabs">
-              <button class="tab active">Today</button>
-              <button class="tab">Yesterday</button>
-              <button class="tab">7d</button>
-            </div>
+            <div class="mod-title">Today</div>
+            <div class="mod-sub" id="pulseSub">Activity past, schedule ahead</div>
           </div>
         </div>
         <div class="mod-body">
@@ -3251,6 +3388,60 @@ input, textarea, select { font: inherit; color: inherit; }
               <div class="pulse-action"><span class="pulse-status info">New</span></div>
             </div>
 
+            <div class="pulse-now">
+              <span class="pulse-now-marker"><span class="pulse-now-dot"></span>Now · 09:50</span>
+            </div>
+
+            <div class="pulse-row" data-pulse="call" data-upcoming="call">
+              <span class="pulse-time">10:30</span>
+              <span class="pulse-icon"><svg><use href="#i-phone"/></svg></span>
+              <div class="pulse-content">
+                <div class="pulse-line"><span class="pulse-actor">Plaid check-in</span> — Petra Lund · 30 min</div>
+                <div class="pulse-meta">A-0017 · post-escalation follow-up · in 40m · Pamir + Director</div>
+              </div>
+              <div class="pulse-action"><button class="verb" data-toast="Joining Plaid check-in.">Join</button></div>
+            </div>
+
+            <div class="pulse-row" data-pulse="deadline" data-upcoming="deadline">
+              <span class="pulse-time">11:00</span>
+              <span class="pulse-icon"><svg><use href="#i-clock"/></svg></span>
+              <div class="pulse-content">
+                <div class="pulse-line"><span class="pulse-actor">Notion DPA</span> delivery committed — <span class="pulse-target">M-0203</span></div>
+                <div class="pulse-meta">Priya Raman · scoped 4h · 3.2h logged · in 70m · on track</div>
+              </div>
+              <div class="pulse-action"><span class="pulse-status">In review</span></div>
+            </div>
+
+            <div class="pulse-row" data-pulse="meeting" data-upcoming="meeting">
+              <span class="pulse-time">13:00</span>
+              <span class="pulse-icon"><svg><use href="#i-users"/></svg></span>
+              <div class="pulse-content">
+                <div class="pulse-line"><span class="pulse-actor">Bench review</span> — Pamir + Director · 30 min</div>
+                <div class="pulse-meta">Weekly sync · L-014 + L-008 rebalance on agenda · in 3h 10m</div>
+              </div>
+              <div class="pulse-action"><button class="verb" data-toast="Bench review opened in calendar.">Open</button></div>
+            </div>
+
+            <div class="pulse-row" data-pulse="deadline" data-upcoming="deadline">
+              <span class="pulse-time">14:30</span>
+              <span class="pulse-icon"><svg><use href="#i-clock"/></svg></span>
+              <div class="pulse-content">
+                <div class="pulse-line"><span class="pulse-actor">Vanta DPA</span> delivery committed — <span class="pulse-target">M-0219</span></div>
+                <div class="pulse-meta">Priya Raman · awaiting AI flag review · in 4h 40m · at risk</div>
+              </div>
+              <div class="pulse-action"><span class="pulse-status">At risk</span></div>
+            </div>
+
+            <div class="pulse-row" data-pulse="call" data-upcoming="call">
+              <span class="pulse-time">16:00</span>
+              <span class="pulse-icon"><svg><use href="#i-phone"/></svg></span>
+              <div class="pulse-content">
+                <div class="pulse-line"><span class="pulse-actor">Replicate scoping</span> — new account intake · 30 min</div>
+                <div class="pulse-meta">Inbound from yesterday · Jonas Kallio lead · in 6h 10m</div>
+              </div>
+              <div class="pulse-action"><button class="verb" data-toast="Replicate scoping joined.">Join</button></div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -3297,10 +3488,17 @@ input, textarea, select { font: inherit; color: inherit; }
             <div class="kpi-eyebrow">Avg matter value</div>
             <div class="kpi-value">$5.2k</div>
             <div class="kpi-sub"><span class="arrow">▲ $340</span> vs prior · mix shifting up</div>
-            <div class="kpi-chart-mini">
-              <svg viewBox="0 0 200 56" preserveAspectRatio="none">
-                <path d="M0 44 L20 42 L40 38 L60 36 L80 32 L100 30 L120 28 L140 24 L160 22 L180 18 L200 16"
-                      fill="none" stroke="var(--sku-1)" stroke-width="1.5"/>
+            <div class="kpi-chart">
+              <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
+                <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$6k</text>
+                <text x="0" y="50" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$5k</text>
+                <text x="0" y="86" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$4k</text>
+                <line x1="22" y1="10" x2="200" y2="10" stroke="var(--border)" stroke-dasharray="2 3"/>
+                <line x1="22" y1="46" x2="200" y2="46" stroke="var(--border)" stroke-dasharray="2 3"/>
+                <line x1="22" y1="82" x2="200" y2="82" stroke="var(--border)"/>
+                <path d="M26 64 L48 60 L70 58 L92 54 L114 48 L136 44 L158 40 L180 36 L196 32"
+                      fill="none" stroke="var(--sku-1)" stroke-width="1.5" stroke-linejoin="round"/>
+                <line x1="194" y1="26" x2="198" y2="38" stroke="var(--foreground)" stroke-width="2" stroke-linecap="round"/>
               </svg>
             </div>
           </div>
@@ -3310,31 +3508,42 @@ input, textarea, select { font: inherit; color: inherit; }
             <div class="kpi-eyebrow">Matters delivered</div>
             <div class="kpi-value">58</div>
             <div class="kpi-sub"><span class="arrow">▲ 7</span> vs prior · run-rate 692/yr</div>
-            <div class="kpi-chart-mini">
-              <svg viewBox="0 0 200 56" preserveAspectRatio="none">
-                <rect x="2" y="34" width="14" height="20" fill="var(--sku-1)" opacity="0.55"/>
-                <rect x="20" y="30" width="14" height="24" fill="var(--sku-1)" opacity="0.6"/>
-                <rect x="38" y="32" width="14" height="22" fill="var(--sku-1)" opacity="0.65"/>
-                <rect x="56" y="28" width="14" height="26" fill="var(--sku-1)" opacity="0.7"/>
-                <rect x="74" y="26" width="14" height="28" fill="var(--sku-1)" opacity="0.75"/>
-                <rect x="92" y="22" width="14" height="32" fill="var(--sku-1)" opacity="0.8"/>
-                <rect x="110" y="20" width="14" height="34" fill="var(--sku-1)" opacity="0.85"/>
-                <rect x="128" y="18" width="14" height="36" fill="var(--sku-1)" opacity="0.9"/>
-                <rect x="146" y="16" width="14" height="38" fill="var(--sku-1)" opacity="0.95"/>
-                <rect x="164" y="12" width="14" height="42" fill="var(--foreground)"/>
+            <div class="kpi-chart">
+              <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
+                <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">60</text>
+                <text x="2" y="50" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">30</text>
+                <text x="2" y="86" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">0</text>
+                <line x1="22" y1="10" x2="200" y2="10" stroke="var(--border)" stroke-dasharray="2 3"/>
+                <line x1="22" y1="46" x2="200" y2="46" stroke="var(--border)" stroke-dasharray="2 3"/>
+                <line x1="22" y1="82" x2="200" y2="82" stroke="var(--border)"/>
+                <rect x="26" y="58" width="14" height="24" fill="var(--sku-1)" opacity="0.55"/>
+                <rect x="46" y="50" width="14" height="32" fill="var(--sku-1)" opacity="0.6"/>
+                <rect x="66" y="54" width="14" height="28" fill="var(--sku-1)" opacity="0.7"/>
+                <rect x="86" y="44" width="14" height="38" fill="var(--sku-1)" opacity="0.75"/>
+                <rect x="106" y="40" width="14" height="42" fill="var(--sku-1)" opacity="0.85"/>
+                <rect x="126" y="36" width="14" height="46" fill="var(--sku-1)" opacity="0.9"/>
+                <rect x="146" y="32" width="14" height="50" fill="var(--sku-1)"/>
+                <rect x="166" y="20" width="14" height="62" fill="var(--foreground)"/>
               </svg>
             </div>
           </div>
 
-          <!-- Days to invoice -->
+          <!-- Bookings · MTD (replaces Days to invoice) -->
           <div class="kpi">
-            <div class="kpi-eyebrow">Days to invoice</div>
-            <div class="kpi-value">4.2d</div>
-            <div class="kpi-sub"><span class="arrow">▼ 0.8d</span> vs prior · working capital up</div>
-            <div class="kpi-chart-mini">
-              <svg viewBox="0 0 200 56" preserveAspectRatio="none">
-                <path d="M0 18 L20 22 L40 20 L60 26 L80 24 L100 30 L120 28 L140 34 L160 36 L180 40 L200 42"
-                      fill="none" stroke="var(--status-on-track-fg)" stroke-width="1.5"/>
+            <div class="kpi-eyebrow">Bookings · MTD</div>
+            <div class="kpi-value">$321k</div>
+            <div class="kpi-sub"><span class="arrow">▲ $42k</span> vs prior · $37k in flight, 12 matters</div>
+            <div class="kpi-chart">
+              <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
+                <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$400</text>
+                <text x="0" y="50" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$200</text>
+                <text x="0" y="86" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$0</text>
+                <line x1="32" y1="10" x2="200" y2="10" stroke="var(--border)" stroke-dasharray="2 3"/>
+                <line x1="32" y1="46" x2="200" y2="46" stroke="var(--border)" stroke-dasharray="2 3"/>
+                <line x1="32" y1="82" x2="200" y2="82" stroke="var(--border)"/>
+                <path d="M36 60 L58 56 L80 50 L102 44 L124 38 L146 32 L168 26 L188 20 L196 16"
+                      fill="none" stroke="var(--sku-1)" stroke-width="1.5" stroke-linejoin="round"/>
+                <line x1="194" y1="10" x2="198" y2="22" stroke="var(--foreground)" stroke-width="2" stroke-linecap="round"/>
               </svg>
             </div>
           </div>
@@ -3590,51 +3799,87 @@ input, textarea, select { font: inherit; color: inherit; }
             </div>
           </div>
 
-          <!-- Right col: top accounts + funnel -->
+          <!-- Right col: top accounts + pipeline -->
           <div class="col">
-            <div class="module">
+            <div class="module" id="finAccountsModule" data-mode="rev">
               <div class="mod-head">
                 <div class="mod-head-titles">
                   <div class="mod-title">Top accounts · MTD</div>
-                  <div class="mod-sub">Top 5 = 53% of revenue</div>
+                  <div class="mod-sub"><span class="when-rev">Top 5 = 53% of revenue</span><span class="when-matters">Top 5 = 22 of 58 matters</span></div>
                 </div>
                 <div class="mod-tools">
                   <div class="tabs">
-                    <button class="tab active">Revenue</button>
-                    <button class="tab">Matters</button>
+                    <button class="tab active" data-acct-tab="rev">Revenue</button>
+                    <button class="tab" data-acct-tab="matters">Matters</button>
                   </div>
                 </div>
               </div>
               <div class="mod-body">
                 <div class="account-row">
                   <span class="account-rank">01</span>
-                  <div class="account-info"><span class="account-name">Plaid</span><span class="account-meta">6 matters · $7.0k avg</span></div>
-                  <span class="account-rev">$42k<span class="delta">▲ 14%</span></span>
+                  <div class="account-info">
+                    <span class="account-name">Plaid</span>
+                    <span class="account-meta"><span class="when-rev">6 matters · $7.0k avg</span><span class="when-matters">$42k revenue · $7.0k avg</span></span>
+                  </div>
+                  <span class="account-rev">
+                    <span class="when-rev">$42k<span class="delta">▲ 14%</span></span>
+                    <span class="when-matters">6<span class="delta">▲ 1</span></span>
+                  </span>
                 </div>
                 <div class="account-row">
                   <span class="account-rank">02</span>
-                  <div class="account-info"><span class="account-name">Linear</span><span class="account-meta">5 matters · $7.6k avg</span></div>
-                  <span class="account-rev">$38k<span class="delta">▲ 8%</span></span>
+                  <div class="account-info">
+                    <span class="account-name">Linear</span>
+                    <span class="account-meta"><span class="when-rev">5 matters · $7.6k avg</span><span class="when-matters">$38k revenue · $7.6k avg</span></span>
+                  </div>
+                  <span class="account-rev">
+                    <span class="when-rev">$38k<span class="delta">▲ 8%</span></span>
+                    <span class="when-matters">5<span class="delta flat">— flat</span></span>
+                  </span>
                 </div>
                 <div class="account-row">
                   <span class="account-rank">03</span>
-                  <div class="account-info"><span class="account-name">Notion</span><span class="account-meta">4 matters · $7.0k avg</span></div>
-                  <span class="account-rev">$28k<span class="delta down">▼ 5%</span></span>
+                  <div class="account-info">
+                    <span class="account-name">Notion</span>
+                    <span class="account-meta"><span class="when-rev">4 matters · $7.0k avg</span><span class="when-matters">$28k revenue · $7.0k avg</span></span>
+                  </div>
+                  <span class="account-rev">
+                    <span class="when-rev">$28k<span class="delta down">▼ 5%</span></span>
+                    <span class="when-matters">4<span class="delta down">▼ 1</span></span>
+                  </span>
                 </div>
                 <div class="account-row">
                   <span class="account-rank">04</span>
-                  <div class="account-info"><span class="account-name">Vanta</span><span class="account-meta">4 matters · $5.5k avg</span></div>
-                  <span class="account-rev">$22k<span class="delta">▲ 12%</span></span>
+                  <div class="account-info">
+                    <span class="account-name">Vanta</span>
+                    <span class="account-meta"><span class="when-rev">4 matters · $5.5k avg</span><span class="when-matters">$22k revenue · $5.5k avg</span></span>
+                  </div>
+                  <span class="account-rev">
+                    <span class="when-rev">$22k<span class="delta">▲ 12%</span></span>
+                    <span class="when-matters">4<span class="delta">▲ 1</span></span>
+                  </span>
                 </div>
                 <div class="account-row">
                   <span class="account-rank">05</span>
-                  <div class="account-info"><span class="account-name">Ramp</span><span class="account-meta">3 matters · $6.0k avg</span></div>
-                  <span class="account-rev">$18k<span class="delta flat">— flat</span></span>
+                  <div class="account-info">
+                    <span class="account-name">Ramp</span>
+                    <span class="account-meta"><span class="when-rev">3 matters · $6.0k avg</span><span class="when-matters">$18k revenue · $6.0k avg</span></span>
+                  </div>
+                  <span class="account-rev">
+                    <span class="when-rev">$18k<span class="delta flat">— flat</span></span>
+                    <span class="when-matters">3<span class="delta flat">— flat</span></span>
+                  </span>
                 </div>
                 <div class="account-row">
                   <span class="account-rank">·</span>
-                  <div class="account-info"><span class="account-name" style="color: var(--muted-foreground); font-weight: 400;">12 other accounts</span><span class="account-meta">35 matters · $3.6k avg</span></div>
-                  <span class="account-rev" style="color: var(--muted-foreground)">$96k</span>
+                  <div class="account-info">
+                    <span class="account-name" style="color: var(--muted-foreground); font-weight: 400;">12 other accounts</span>
+                    <span class="account-meta"><span class="when-rev">35 matters · $3.6k avg</span><span class="when-matters">$96k revenue · $3.6k avg</span></span>
+                  </div>
+                  <span class="account-rev" style="color: var(--muted-foreground)">
+                    <span class="when-rev">$96k</span>
+                    <span class="when-matters">35</span>
+                  </span>
                 </div>
 
                 <div class="concentration">
@@ -3656,25 +3901,68 @@ input, textarea, select { font: inherit; color: inherit; }
               </div>
             </div>
 
-            <!-- Pipeline funnel -->
+            <!-- Pipeline · source attribution + funnel -->
             <div class="module">
               <div class="mod-head">
                 <div class="mod-head-titles">
                   <div class="mod-title">Pipeline · last 30d</div>
-                  <div class="mod-sub">Lead → cash conversion</div>
-                </div>
-                <div class="mod-tools">
+                  <div class="mod-sub">$321k closed · 28 deals · 34% win · 8.5d to close</div>
                 </div>
               </div>
               <div class="mod-body">
-                <div class="funnel">
-                  <div class="funnel-row"><span class="funnel-stage">Inbound leads</span><div class="funnel-bar"><div class="fill" style="width: 100%"></div></div><span class="funnel-count">82</span><span class="funnel-conv"></span></div>
-                  <div class="funnel-row"><span class="funnel-stage">Quoted</span><div class="funnel-bar"><div class="fill" style="width: 88%"></div></div><span class="funnel-count">72</span><span class="funnel-conv">88%</span></div>
-                  <div class="funnel-row"><span class="funnel-stage">Booked</span><div class="funnel-bar"><div class="fill" style="width: 71%"></div></div><span class="funnel-count">58</span><span class="funnel-conv">81%</span></div>
-                  <div class="funnel-row"><span class="funnel-stage">Delivered</span><div class="funnel-bar"><div class="fill" style="width: 65%"></div></div><span class="funnel-count">53</span><span class="funnel-conv">91%</span></div>
-                  <div class="funnel-row"><span class="funnel-stage">Invoiced</span><div class="funnel-bar"><div class="fill" style="width: 59%"></div></div><span class="funnel-count">48</span><span class="funnel-conv">91%</span></div>
-                  <div class="funnel-row"><span class="funnel-stage">Paid · &lt;30d</span><div class="funnel-bar"><div class="fill" style="width: 50%"></div></div><span class="funnel-count">41</span><span class="funnel-conv lossy">85%</span></div>
+
+                <div class="pipe-section">
+                  <div class="pipe-section-head">
+                    <span class="label">Source mix</span>
+                    <span class="meta">Warm channels = 79% of revenue</span>
+                  </div>
+                  <div class="source-row">
+                    <div class="source-label"><span class="source-dot" style="background: var(--sku-1)"></span>VC partner referrals</div>
+                    <div class="source-bar"><div class="fill" style="width: 100%; background: var(--sku-1);"></div></div>
+                    <div class="source-stats">
+                      <span class="rev">$158k</span>
+                      <span class="meta">12 closed · 86% win</span>
+                    </div>
+                  </div>
+                  <div class="source-row">
+                    <div class="source-label"><span class="source-dot" style="background: var(--sku-3)"></span>Founder referrals</div>
+                    <div class="source-bar"><div class="fill" style="width: 60%; background: var(--sku-3);"></div></div>
+                    <div class="source-stats">
+                      <span class="rev">$94k</span>
+                      <span class="meta">8 closed · 73% win</span>
+                    </div>
+                  </div>
+                  <div class="source-row">
+                    <div class="source-label"><span class="source-dot" style="background: var(--sku-2)"></span>Inbound (web · SEO)</div>
+                    <div class="source-bar"><div class="fill" style="width: 33%; background: var(--sku-2);"></div></div>
+                    <div class="source-stats">
+                      <span class="rev">$52k</span>
+                      <span class="meta">6 closed · 55% win</span>
+                    </div>
+                  </div>
+                  <div class="source-row">
+                    <div class="source-label"><span class="source-dot" style="background: var(--sku-4)"></span>Outbound (LI · email)</div>
+                    <div class="source-bar"><div class="fill" style="width: 11%; background: var(--sku-4);"></div></div>
+                    <div class="source-stats">
+                      <span class="rev">$17k</span>
+                      <span class="meta">2 closed · 29% win</span>
+                    </div>
+                  </div>
                 </div>
+
+                <div class="pipe-section">
+                  <div class="pipe-section-head">
+                    <span class="label">Stage progression</span>
+                    <span class="meta">Avg deal $11.5k · cycle 8.5d</span>
+                  </div>
+                  <div class="funnel">
+                    <div class="funnel-row"><span class="funnel-stage">Lead intake</span><div class="funnel-bar"><div class="fill" style="width: 100%"></div></div><span class="funnel-count">82</span><span class="funnel-conv">—</span></div>
+                    <div class="funnel-row"><span class="funnel-stage">Discovery</span><div class="funnel-bar"><div class="fill" style="width: 78%"></div></div><span class="funnel-count">64</span><span class="funnel-conv">78%</span></div>
+                    <div class="funnel-row"><span class="funnel-stage">Proposal sent</span><div class="funnel-bar"><div class="fill" style="width: 51%"></div></div><span class="funnel-count">42</span><span class="funnel-conv lossy">66%</span></div>
+                    <div class="funnel-row"><span class="funnel-stage">Engaged</span><div class="funnel-bar"><div class="fill" style="width: 34%"></div></div><span class="funnel-count">28</span><span class="funnel-conv">67%</span></div>
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
@@ -4549,7 +4837,20 @@ input, textarea, select { font: inherit; color: inherit; }
     }
   })();
 
-  // Lede hover — highlight the corresponding dashboard module
+  // Top accounts — toggle Revenue / Matters mode
+  (function () {
+    const mod = document.getElementById('finAccountsModule');
+    if (!mod) return;
+    mod.querySelectorAll('[data-acct-tab]').forEach(t => {
+      t.addEventListener('click', () => {
+        const mode = t.dataset.acctTab;
+        mod.dataset.mode = mode;
+        mod.querySelectorAll('[data-acct-tab]').forEach(x => x.classList.toggle('active', x === t));
+      });
+    });
+  })();
+
+  // Lede phrases — hover highlights, click scrolls
   (function () {
     function clear() {
       document.querySelectorAll('.is-highlighted').forEach(el => el.classList.remove('is-highlighted'));
@@ -4558,13 +4859,14 @@ input, textarea, select { font: inherit; color: inherit; }
       clear();
       document.querySelectorAll(`[data-highlight-target="${key}"]`).forEach(el => {
         el.classList.add('is-highlighted');
-        if (el.scrollIntoView) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top < 80 || rect.bottom > window.innerHeight - 40) {
-            el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          }
-        }
       });
+    }
+    function scrollToTarget(key) {
+      const target = document.querySelector(`[data-highlight-target="${key}"]`);
+      if (!target) return;
+      const rect = target.getBoundingClientRect();
+      const top = rect.top + window.scrollY - 80;
+      window.scrollTo({ top, behavior: 'smooth' });
     }
 
     document.body.addEventListener('mouseover', (e) => {
@@ -4579,6 +4881,13 @@ input, textarea, select { font: inherit; color: inherit; }
       const related = e.relatedTarget;
       if (related && trigger.contains(related)) return;
       clear();
+    });
+
+    document.body.addEventListener('click', (e) => {
+      const trigger = e.target.closest('[data-highlight]');
+      if (!trigger) return;
+      e.preventDefault();
+      scrollToTarget(trigger.dataset.highlight);
     });
   })();
 
@@ -5139,7 +5448,7 @@ input, textarea, select { font: inherit; color: inherit; }
 
       voiceAttrib: '<span class="name">Eva Lindqvist</span> <span>·</span> <span class="ctx">CEO, Plaid · 2d ago</span>',
 
-      pulseSub: 'Eight deliveries, two onboardings, a quiet day',
+      pulseSub: 'Activity past, schedule ahead',
 
       pulseList: `
         <div class="pulse-row" data-pulse="delivered">
@@ -5214,6 +5523,50 @@ input, textarea, select { font: inherit; color: inherit; }
           </div>
           <div class="pulse-action"><span class="pulse-status info">New</span></div>
         </div>
+
+        <div class="pulse-now">
+          <span class="pulse-now-marker"><span class="pulse-now-dot"></span>Now · 14:22</span>
+        </div>
+
+        <div class="pulse-row" data-pulse="meeting" data-upcoming="meeting">
+          <span class="pulse-time">15:00</span>
+          <span class="pulse-icon"><svg><use href="#i-users"/></svg></span>
+          <div class="pulse-content">
+            <div class="pulse-line"><span class="pulse-actor">Hanna Berg onboarding</span> — bench intro · 60 min</div>
+            <div class="pulse-meta">L-023 · workflow walkthrough · in 38m</div>
+          </div>
+          <div class="pulse-action"><button class="verb" data-toast="Onboarding session opened.">Open</button></div>
+        </div>
+
+        <div class="pulse-row" data-pulse="call" data-upcoming="call">
+          <span class="pulse-time">15:45</span>
+          <span class="pulse-icon"><svg><use href="#i-phone"/></svg></span>
+          <div class="pulse-content">
+            <div class="pulse-line"><span class="pulse-actor">Notion Q3 renewal</span> — early planning call · 30 min</div>
+            <div class="pulse-meta">A-0019 · proactive · in 1h 23m</div>
+          </div>
+          <div class="pulse-action"><button class="verb" data-toast="Joining Notion call.">Join</button></div>
+        </div>
+
+        <div class="pulse-row" data-pulse="deadline" data-upcoming="deadline">
+          <span class="pulse-time">17:00</span>
+          <span class="pulse-icon"><svg><use href="#i-clock"/></svg></span>
+          <div class="pulse-content">
+            <div class="pulse-line"><span class="pulse-actor">Replicate scoping doc</span> — internal target — <span class="pulse-target">A-0042</span></div>
+            <div class="pulse-meta">Jonas Kallio · 80% drafted · in 2h 38m · ahead</div>
+          </div>
+          <div class="pulse-action"><span class="pulse-status">Drafting</span></div>
+        </div>
+
+        <div class="pulse-row" data-pulse="meeting" data-upcoming="meeting">
+          <span class="pulse-time">Tomorrow · 09:30</span>
+          <span class="pulse-icon"><svg><use href="#i-users"/></svg></span>
+          <div class="pulse-content">
+            <div class="pulse-line"><span class="pulse-actor">Bench review</span> — Pamir + Director · 30 min</div>
+            <div class="pulse-meta">Weekly sync · all clear, mostly hiring follow-ups</div>
+          </div>
+          <div class="pulse-action"><button class="verb" data-toast="Bench review opened.">Open</button></div>
+        </div>
       `,
 
       acctMeta: 'all healthy',
@@ -5244,10 +5597,17 @@ input, textarea, select { font: inherit; color: inherit; }
           <div class="kpi-eyebrow">Avg matter value</div>
           <div class="kpi-value">$5.4k</div>
           <div class="kpi-sub"><span class="arrow">▲ $520</span> vs prior · Series mix lifting the average</div>
-          <div class="kpi-chart-mini">
-            <svg viewBox="0 0 200 56" preserveAspectRatio="none">
-              <path d="M0 50 L20 46 L40 42 L60 38 L80 32 L100 28 L120 24 L140 18 L160 14 L180 10 L200 6"
-                    fill="none" stroke="var(--sku-1)" stroke-width="1.5"/>
+          <div class="kpi-chart">
+            <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
+              <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$6k</text>
+              <text x="0" y="50" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$5k</text>
+              <text x="0" y="86" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$4k</text>
+              <line x1="22" y1="10" x2="200" y2="10" stroke="var(--border)" stroke-dasharray="2 3"/>
+              <line x1="22" y1="46" x2="200" y2="46" stroke="var(--border)" stroke-dasharray="2 3"/>
+              <line x1="22" y1="82" x2="200" y2="82" stroke="var(--border)"/>
+              <path d="M26 58 L48 52 L70 48 L92 42 L114 36 L136 30 L158 24 L180 18 L196 14"
+                    fill="none" stroke="var(--sku-1)" stroke-width="1.5" stroke-linejoin="round"/>
+              <line x1="194" y1="8" x2="198" y2="20" stroke="var(--foreground)" stroke-width="2" stroke-linecap="round"/>
             </svg>
           </div>
         </div>
@@ -5255,29 +5615,40 @@ input, textarea, select { font: inherit; color: inherit; }
           <div class="kpi-eyebrow">Matters delivered</div>
           <div class="kpi-value">64</div>
           <div class="kpi-sub"><span class="arrow">▲ 13</span> vs prior · run-rate 765/yr</div>
-          <div class="kpi-chart-mini">
-            <svg viewBox="0 0 200 56" preserveAspectRatio="none">
-              <rect x="2" y="38" width="14" height="16" fill="var(--sku-1)" opacity="0.55"/>
-              <rect x="20" y="34" width="14" height="20" fill="var(--sku-1)" opacity="0.6"/>
-              <rect x="38" y="32" width="14" height="22" fill="var(--sku-1)" opacity="0.65"/>
-              <rect x="56" y="28" width="14" height="26" fill="var(--sku-1)" opacity="0.7"/>
-              <rect x="74" y="24" width="14" height="30" fill="var(--sku-1)" opacity="0.75"/>
-              <rect x="92" y="20" width="14" height="34" fill="var(--sku-1)" opacity="0.8"/>
-              <rect x="110" y="16" width="14" height="38" fill="var(--sku-1)" opacity="0.85"/>
-              <rect x="128" y="14" width="14" height="40" fill="var(--sku-1)" opacity="0.9"/>
-              <rect x="146" y="12" width="14" height="42" fill="var(--sku-1)" opacity="0.95"/>
-              <rect x="164" y="6" width="14" height="48" fill="var(--foreground)"/>
+          <div class="kpi-chart">
+            <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
+              <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">70</text>
+              <text x="2" y="50" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">35</text>
+              <text x="2" y="86" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">0</text>
+              <line x1="22" y1="10" x2="200" y2="10" stroke="var(--border)" stroke-dasharray="2 3"/>
+              <line x1="22" y1="46" x2="200" y2="46" stroke="var(--border)" stroke-dasharray="2 3"/>
+              <line x1="22" y1="82" x2="200" y2="82" stroke="var(--border)"/>
+              <rect x="26" y="56" width="14" height="26" fill="var(--sku-1)" opacity="0.55"/>
+              <rect x="46" y="48" width="14" height="34" fill="var(--sku-1)" opacity="0.6"/>
+              <rect x="66" y="44" width="14" height="38" fill="var(--sku-1)" opacity="0.7"/>
+              <rect x="86" y="38" width="14" height="44" fill="var(--sku-1)" opacity="0.75"/>
+              <rect x="106" y="32" width="14" height="50" fill="var(--sku-1)" opacity="0.85"/>
+              <rect x="126" y="26" width="14" height="56" fill="var(--sku-1)" opacity="0.9"/>
+              <rect x="146" y="22" width="14" height="60" fill="var(--sku-1)"/>
+              <rect x="166" y="14" width="14" height="68" fill="var(--foreground)"/>
             </svg>
           </div>
         </div>
         <div class="kpi">
-          <div class="kpi-eyebrow">Days to invoice</div>
-          <div class="kpi-value">3.8d</div>
-          <div class="kpi-sub"><span class="arrow">▼ 1.2d</span> vs prior · receivables strong</div>
-          <div class="kpi-chart-mini">
-            <svg viewBox="0 0 200 56" preserveAspectRatio="none">
-              <path d="M0 14 L20 18 L40 16 L60 22 L80 26 L100 30 L120 32 L140 36 L160 40 L180 44 L200 48"
-                    fill="none" stroke="var(--status-on-track-fg)" stroke-width="1.5"/>
+          <div class="kpi-eyebrow">Bookings · MTD</div>
+          <div class="kpi-value">$358k</div>
+          <div class="kpi-sub"><span class="arrow">▲ $74k</span> vs prior · $46k in flight, 14 matters</div>
+          <div class="kpi-chart">
+            <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
+              <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$400</text>
+              <text x="0" y="50" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$200</text>
+              <text x="0" y="86" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$0</text>
+              <line x1="32" y1="10" x2="200" y2="10" stroke="var(--border)" stroke-dasharray="2 3"/>
+              <line x1="32" y1="46" x2="200" y2="46" stroke="var(--border)" stroke-dasharray="2 3"/>
+              <line x1="32" y1="82" x2="200" y2="82" stroke="var(--border)"/>
+              <path d="M36 56 L58 50 L80 42 L102 36 L124 28 L146 22 L168 16 L188 10 L196 6"
+                    fill="none" stroke="var(--sku-1)" stroke-width="1.5" stroke-linejoin="round"/>
+              <line x1="194" y1="0" x2="198" y2="12" stroke="var(--foreground)" stroke-width="2" stroke-linecap="round"/>
             </svg>
           </div>
         </div>
