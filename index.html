@@ -2134,6 +2134,146 @@ input, textarea, select { font: inherit; color: inherit; }
   color: var(--foreground);
 }
 
+/* Matter pipeline — kanban board */
+.pipe-board {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(220px, 1fr));
+  gap: var(--space-sm);
+  overflow-x: auto;
+  padding-bottom: var(--space-xs);
+}
+.pipe-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--general-background);
+  border-radius: var(--radius-md);
+  padding: 10px 8px;
+  min-width: 0;
+}
+.pipe-col.bottleneck {
+  background: color-mix(in srgb, var(--status-margin-watch-fg) 8%, var(--general-background));
+}
+.pipe-col-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 6px 8px;
+}
+.pipe-col-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--foreground);
+}
+.pipe-col-count {
+  font-family: "Geist Mono", monospace;
+  font-size: var(--fs-mini);
+  color: var(--muted-foreground);
+  font-weight: 500;
+}
+.pipe-col-meta {
+  font-family: "Geist Mono", monospace;
+  font-size: 10px;
+  color: var(--muted-foreground);
+  letter-spacing: 0.02em;
+}
+.bottleneck-tag {
+  background: var(--margin-watch-bg);
+  color: var(--status-margin-watch-fg);
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-weight: 500;
+  margin-left: 4px;
+}
+.pipe-col-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.pipe-card {
+  background: var(--card);
+  border: 1px solid var(--border-1);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  transition: border-color 80ms ease;
+}
+.pipe-card:hover { border-color: var(--muted-foreground); }
+.pipe-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: "Geist Mono", monospace;
+  font-size: 10px;
+  color: var(--muted-foreground);
+}
+.pipe-card-id { letter-spacing: 0.02em; }
+.pipe-card-time { letter-spacing: 0.02em; }
+.pipe-card-time.sla {
+  color: var(--status-sla-risk-fg);
+  font-weight: 500;
+}
+.pipe-card-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--foreground);
+  line-height: 1.3;
+}
+.pipe-card-acct {
+  font-size: var(--fs-mini);
+  color: var(--muted-foreground);
+}
+.pipe-card-lawyer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-mini);
+  color: var(--muted-foreground);
+}
+.pipe-card-lawyer .avatar {
+  width: 18px;
+  height: 18px;
+  font-size: 9px;
+}
+.pipe-card-amount {
+  font-family: "Geist Mono", monospace;
+  font-size: var(--fs-mini);
+  color: var(--foreground);
+  font-weight: 500;
+}
+.pipe-card-more {
+  background: transparent;
+  border: 1px dashed var(--border);
+  color: var(--muted-foreground);
+  font-size: var(--fs-mini);
+  text-align: center;
+  cursor: pointer;
+  padding: 8px;
+}
+.pipe-card-more:hover { color: var(--foreground); }
+.badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.badge.on-track { background: var(--on-track-bg); color: var(--status-on-track-fg); }
+.badge.in-review { background: var(--secondary); color: var(--muted-foreground); }
+.badge.sla-risk { background: var(--sla-risk-bg); color: var(--status-sla-risk-fg); }
+
+@media (max-width: 1100px) {
+  .pipe-board { grid-template-columns: repeat(6, 220px); }
+}
+
 /* Most recent sale — Operations bottom-left card */
 #recentSaleModule {
   flex: 1;
@@ -3035,6 +3175,121 @@ input, textarea, select { font: inherit; color: inherit; }
 .modal-card.active { display: flex; }
 .modal-stage.open .modal-card.active { transform: translateY(0) scale(1); opacity: 1; }
 .modal-card[data-modal="rebalance"] { max-width: 600px; }
+.modal-card[data-modal="matter"] { max-width: 640px; }
+
+/* Matter modal — pipeline-card editor */
+.matter-form-row { display: flex; flex-direction: column; gap: 6px; }
+.matter-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+.text-input {
+  width: 100%;
+  font-family: "Geist", system-ui, sans-serif;
+  font-size: var(--fs-sm);
+  color: var(--foreground);
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  transition: border-color 80ms ease;
+}
+.text-input:focus {
+  outline: none;
+  border-color: var(--foreground);
+}
+select.text-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%236f6657' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+}
+.status-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+.status-pill {
+  background: var(--secondary);
+  color: var(--muted-foreground);
+  border: 1px solid transparent;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: var(--fs-mini);
+  cursor: pointer;
+  transition: background 80ms ease, border-color 80ms ease;
+}
+.status-pill:hover { border-color: var(--border); }
+.status-pill.active {
+  background: var(--foreground);
+  color: var(--primary-foreground);
+}
+
+/* Stage stepper */
+.stage-stepper {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
+}
+.stage-step-btn {
+  height: 32px;
+  padding: 0 12px;
+}
+.stage-track {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+  position: relative;
+}
+.stage-track li {
+  font-size: 10px;
+  font-family: "Geist Mono", monospace;
+  letter-spacing: 0.02em;
+  text-align: center;
+  padding: 8px 4px;
+  border-radius: var(--radius-sm);
+  background: var(--secondary);
+  color: var(--muted-foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.stage-track li.done {
+  background: var(--on-track-bg);
+  color: var(--status-on-track-fg);
+}
+.stage-track li.current {
+  background: var(--foreground);
+  color: var(--primary-foreground);
+  font-weight: 500;
+}
+
+/* Matter foot — destructive on left, save on right */
+.matter-modal-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.matter-foot-right {
+  display: flex;
+  gap: 8px;
+}
+.btn.destructive {
+  background: transparent;
+  color: var(--status-sla-risk-fg);
+  border: 1px solid var(--status-sla-risk-fg);
+}
+.btn.destructive:hover {
+  background: var(--sla-risk-bg);
+}
 
 .modal-head {
   display: flex; align-items: flex-start;
@@ -4040,6 +4295,162 @@ input, textarea, select { font: inherit; color: inherit; }
             </div>
           </div>
 
+        </div>
+      </section>
+
+      <!-- Matter pipeline — kanban across delivery stages -->
+      <section class="module" id="opsPipelineModule" data-highlight-target="pipeline">
+        <div class="mod-head">
+          <div class="mod-head-titles">
+            <div class="mod-title">Matter pipeline</div>
+            <div class="mod-sub">120 in flight · Attorney review is the bottleneck</div>
+          </div>
+          <div class="mod-tools">
+            <button class="select-trigger">All matters <svg width="10" height="10"><use href="#i-chev-down"/></svg></button>
+          </div>
+        </div>
+        <div class="mod-body">
+          <div class="pipe-board">
+
+            <!-- 1 · Intake -->
+            <div class="pipe-col">
+              <div class="pipe-col-head">
+                <div class="pipe-col-title"><span>Intake</span><span class="pipe-col-count">13</span></div>
+                <div class="pipe-col-meta">~38m avg in stage</div>
+              </div>
+              <div class="pipe-col-body">
+                <div class="pipe-card" data-modal="matter" data-matter-id="M-2026-1098" data-matter-title="SAFE redline" data-matter-account="Plaid" data-matter-stage="1" data-matter-time="4m" data-matter-lawyer="" data-matter-status="on track">
+                  <div class="pipe-card-top"><span class="pipe-card-id">M-2026-1098</span><span class="pipe-card-time">4m</span></div>
+                  <div class="pipe-card-title">SAFE redline</div>
+                  <div class="pipe-card-acct">Plaid</div>
+                  <span class="badge on-track">on track</span>
+                </div>
+                <div class="pipe-card" data-modal="matter" data-matter-id="M-2026-1097" data-matter-title="DPA refresh" data-matter-account="Notion" data-matter-stage="1" data-matter-time="11m" data-matter-lawyer="" data-matter-status="on track">
+                  <div class="pipe-card-top"><span class="pipe-card-id">M-2026-1097</span><span class="pipe-card-time">11m</span></div>
+                  <div class="pipe-card-title">DPA refresh</div>
+                  <div class="pipe-card-acct">Notion</div>
+                  <span class="badge on-track">on track</span>
+                </div>
+                <div class="pipe-card pipe-card-more">+11 more</div>
+              </div>
+            </div>
+
+            <!-- 2 · Scope & assign (merged) -->
+            <div class="pipe-col">
+              <div class="pipe-col-head">
+                <div class="pipe-col-title"><span>Scope &amp; assign</span><span class="pipe-col-count">16</span></div>
+                <div class="pipe-col-meta">~1h 30m avg</div>
+              </div>
+              <div class="pipe-col-body">
+                <div class="pipe-card" data-modal="matter" data-matter-id="M-2026-1083" data-matter-title="MSA renewal" data-matter-account="Datadogs" data-matter-stage="2" data-matter-time="1h 40m" data-matter-lawyer="" data-matter-status="on track">
+                  <div class="pipe-card-top"><span class="pipe-card-id">M-2026-1083</span><span class="pipe-card-time">1h 40m</span></div>
+                  <div class="pipe-card-title">MSA renewal</div>
+                  <div class="pipe-card-acct">Datadogs</div>
+                  <span class="badge on-track">on track</span>
+                </div>
+                <div class="pipe-card" data-modal="matter" data-matter-id="M-2026-1074" data-matter-title="M&A diligence" data-matter-account="Linear" data-matter-stage="2" data-matter-time="5h 22m" data-matter-lawyer="" data-matter-status="scoping">
+                  <div class="pipe-card-top"><span class="pipe-card-id">M-2026-1074</span><span class="pipe-card-time">5h 22m</span></div>
+                  <div class="pipe-card-title">M&amp;A diligence</div>
+                  <div class="pipe-card-acct">Linear</div>
+                  <span class="badge in-review">scoping</span>
+                </div>
+                <div class="pipe-card pipe-card-more">+14 more</div>
+              </div>
+            </div>
+
+            <!-- 3 · AI draft -->
+            <div class="pipe-col">
+              <div class="pipe-col-head">
+                <div class="pipe-col-title"><span>AI draft</span><span class="pipe-col-count">17</span></div>
+                <div class="pipe-col-meta">~14m avg · fastest stage</div>
+              </div>
+              <div class="pipe-col-body">
+                <div class="pipe-card" data-modal="matter" data-matter-id="M-2026-1059" data-matter-title="Employment package" data-matter-account="Ramp" data-matter-stage="3" data-matter-time="8m" data-matter-lawyer="Jonas Kallio" data-matter-status="on track">
+                  <div class="pipe-card-top"><span class="pipe-card-id">M-2026-1059</span><span class="pipe-card-time">8m</span></div>
+                  <div class="pipe-card-title">Employment package</div>
+                  <div class="pipe-card-acct">Ramp</div>
+                  <div class="pipe-card-lawyer"><span class="avatar">JK</span>Jonas K.</div>
+                </div>
+                <div class="pipe-card" data-modal="matter" data-matter-id="M-2026-1054" data-matter-title="MSA redline" data-matter-account="Linear" data-matter-stage="3" data-matter-time="11m" data-matter-lawyer="Marcus Chen" data-matter-status="on track">
+                  <div class="pipe-card-top"><span class="pipe-card-id">M-2026-1054</span><span class="pipe-card-time">11m</span></div>
+                  <div class="pipe-card-title">MSA redline</div>
+                  <div class="pipe-card-acct">Linear</div>
+                  <div class="pipe-card-lawyer"><span class="avatar">MC</span>Marcus C.</div>
+                </div>
+                <div class="pipe-card pipe-card-more">+15 more</div>
+              </div>
+            </div>
+
+            <!-- 4 · Attorney review (bottleneck) -->
+            <div class="pipe-col bottleneck">
+              <div class="pipe-col-head">
+                <div class="pipe-col-title"><span>Attorney review</span><span class="pipe-col-count">34</span></div>
+                <div class="pipe-col-meta">~18h avg · <span class="bottleneck-tag">bottleneck</span></div>
+              </div>
+              <div class="pipe-col-body">
+                <div class="pipe-card" data-modal="matter" data-matter-id="M-2026-0219" data-matter-title="DPA review" data-matter-account="Vanta" data-matter-stage="4" data-matter-time="SLA −2h" data-matter-lawyer="Priya Raman" data-matter-status="SLA breach">
+                  <div class="pipe-card-top"><span class="pipe-card-id">M-2026-0219</span><span class="pipe-card-time sla">SLA −2h</span></div>
+                  <div class="pipe-card-title">DPA review</div>
+                  <div class="pipe-card-acct">Vanta</div>
+                  <span class="badge sla-risk">SLA breach</span>
+                </div>
+                <div class="pipe-card" data-modal="matter" data-matter-id="M-2026-0203" data-matter-title="DPA refresh" data-matter-account="Notion" data-matter-stage="4" data-matter-time="16h" data-matter-lawyer="Priya Raman" data-matter-status="in review">
+                  <div class="pipe-card-top"><span class="pipe-card-id">M-2026-0203</span><span class="pipe-card-time">16h</span></div>
+                  <div class="pipe-card-title">DPA refresh</div>
+                  <div class="pipe-card-acct">Notion</div>
+                  <div class="pipe-card-lawyer"><span class="avatar">PR</span>Priya R.</div>
+                </div>
+                <div class="pipe-card pipe-card-more">+32 more</div>
+              </div>
+            </div>
+
+            <!-- 5 · Delivery -->
+            <div class="pipe-col">
+              <div class="pipe-col-head">
+                <div class="pipe-col-title"><span>Delivery</span><span class="pipe-col-count">14</span></div>
+                <div class="pipe-col-meta">~38m avg</div>
+              </div>
+              <div class="pipe-col-body">
+                <div class="pipe-card" data-modal="matter" data-matter-id="M-2026-1019" data-matter-title="MSA" data-matter-account="Linear" data-matter-stage="5" data-matter-time="22m" data-matter-lawyer="Marcus Chen" data-matter-status="delivered">
+                  <div class="pipe-card-top"><span class="pipe-card-id">M-2026-1019</span><span class="pipe-card-time">22m</span></div>
+                  <div class="pipe-card-title">MSA</div>
+                  <div class="pipe-card-acct">Linear</div>
+                  <span class="badge on-track">delivered</span>
+                </div>
+                <div class="pipe-card" data-modal="matter" data-matter-id="M-2026-1014" data-matter-title="SAFE redline" data-matter-account="Plaid" data-matter-stage="5" data-matter-time="1h" data-matter-lawyer="" data-matter-status="delivered">
+                  <div class="pipe-card-top"><span class="pipe-card-id">M-2026-1014</span><span class="pipe-card-time">1h</span></div>
+                  <div class="pipe-card-title">SAFE redline</div>
+                  <div class="pipe-card-acct">Plaid</div>
+                  <span class="badge on-track">delivered</span>
+                </div>
+                <div class="pipe-card pipe-card-more">+12 more</div>
+              </div>
+            </div>
+
+            <!-- 6 · Closed (Bill + Post-matter merged) -->
+            <div class="pipe-col">
+              <div class="pipe-col-head">
+                <div class="pipe-col-title"><span>Closed</span><span class="pipe-col-count">26</span></div>
+                <div class="pipe-col-meta">NPS 8.6 avg · billed</div>
+              </div>
+              <div class="pipe-col-body">
+                <div class="pipe-card" data-modal="matter" data-matter-id="M-2026-0998" data-matter-title="Financing docs" data-matter-account="Vanta" data-matter-stage="6" data-matter-time="2h" data-matter-lawyer="" data-matter-status="billed $5,200">
+                  <div class="pipe-card-top"><span class="pipe-card-id">M-2026-0998</span><span class="pipe-card-time">2h</span></div>
+                  <div class="pipe-card-title">Financing docs</div>
+                  <div class="pipe-card-acct">Vanta</div>
+                  <span class="pipe-card-amount">$5,200</span>
+                </div>
+                <div class="pipe-card" data-modal="matter" data-matter-id="M-2026-0962" data-matter-title="DPA" data-matter-account="Ramp" data-matter-stage="6" data-matter-time="2d" data-matter-lawyer="" data-matter-status="NPS 9">
+                  <div class="pipe-card-top"><span class="pipe-card-id">M-2026-0962</span><span class="pipe-card-time">2d</span></div>
+                  <div class="pipe-card-title">DPA</div>
+                  <div class="pipe-card-acct">Ramp</div>
+                  <span class="badge on-track">NPS 9</span>
+                </div>
+                <div class="pipe-card pipe-card-more">+24 more</div>
+              </div>
+            </div>
+
+          </div>
         </div>
       </section>
 
@@ -5148,6 +5559,77 @@ input, textarea, select { font: inherit; color: inherit; }
       <button class="btn primary" data-confirm="Calendar invite sent to all attendees.">Send invite</button>
     </div>
   </div>
+
+  <!-- 5. Matter modal — pipeline card editor -->
+  <div class="modal-card" data-modal="matter" role="dialog" aria-modal="true" aria-labelledby="matterTitle">
+    <div class="modal-head">
+      <div class="modal-titles">
+        <span class="modal-eyebrow"><span class="sev-dot sev-info"></span><span data-mt-id>M-2026-0000</span> · <span data-mt-stage-label>Stage</span> · in stage <span data-mt-time>0m</span></span>
+        <h3 class="modal-title" id="matterTitle">Edit matter</h3>
+        <p class="modal-sub">Update fields, advance the stage, or delete this matter.</p>
+      </div>
+      <button class="modal-close" data-close-modal aria-label="Close"><svg width="14" height="14"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="modal-body">
+
+      <div class="matter-form-row">
+        <label class="field-label" for="mtTitleInput">Title</label>
+        <input id="mtTitleInput" type="text" class="text-input" data-mt-title-input value="Title" />
+      </div>
+
+      <div class="matter-form-grid">
+        <div>
+          <label class="field-label" for="mtAccountInput">Account</label>
+          <input id="mtAccountInput" type="text" class="text-input" data-mt-account-input value="Account" />
+        </div>
+        <div>
+          <label class="field-label" for="mtLawyerSelect">Assigned lawyer</label>
+          <select id="mtLawyerSelect" class="text-input" data-mt-lawyer-select>
+            <option value="">— Unassigned —</option>
+            <option value="Marcus Chen">Marcus Chen · SaaS · Commercial</option>
+            <option value="Priya Raman">Priya Raman · Privacy · Compliance</option>
+            <option value="Jonas Kallio">Jonas Kallio · Employment</option>
+            <option value="Ella Hoffmann">Ella Hoffmann · IP · Trademarks</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <div class="field-label">Status</div>
+        <div class="status-picker" data-mt-status-picker>
+          <button class="status-pill" data-status="on track">on track</button>
+          <button class="status-pill" data-status="scoping">scoping</button>
+          <button class="status-pill" data-status="in review">in review</button>
+          <button class="status-pill" data-status="SLA breach">SLA breach</button>
+          <button class="status-pill" data-status="delivered">delivered</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="field-label">Stage</div>
+        <div class="stage-stepper">
+          <button class="btn ghost stage-step-btn" data-stage-dir="-1" aria-label="Move to previous stage">← Prev</button>
+          <ol class="stage-track" data-mt-stage-track>
+            <li data-stage="1">Intake</li>
+            <li data-stage="2">Scope &amp; assign</li>
+            <li data-stage="3">AI draft</li>
+            <li data-stage="4">Attorney review</li>
+            <li data-stage="5">Delivery</li>
+            <li data-stage="6">Closed</li>
+          </ol>
+          <button class="btn ghost stage-step-btn" data-stage-dir="1" aria-label="Move to next stage">Next →</button>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-foot matter-modal-foot">
+      <button class="btn destructive" data-confirm="Matter deleted." data-mt-action="delete">Delete matter</button>
+      <div class="matter-foot-right">
+        <button class="btn ghost" data-close-modal>Cancel</button>
+        <button class="btn primary" data-confirm="Matter saved." data-mt-action="save">Save changes</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ============ QUICK ACTIONS CONTEXT POPOVER ============ -->
@@ -5324,6 +5806,31 @@ input, textarea, select { font: inherit; color: inherit; }
       if (name === 'schedule' && ctx && ctx.account) {
         stage.querySelectorAll('[data-account-name]').forEach(n => n.textContent = ctx.account);
       }
+      // Inject matter-specific values for pipeline-card matter modal
+      if (name === 'matter' && ctx && ctx.matter) {
+        const m = ctx.matter;
+        const card = stage.querySelector('[data-modal="matter"]');
+        const STAGE_LABELS = ['Intake','Scope & assign','AI draft','Attorney review','Delivery','Closed'];
+        const setText = (sel, val) => card.querySelectorAll(sel).forEach(n => n.textContent = val);
+        const setVal  = (sel, val) => card.querySelectorAll(sel).forEach(n => { n.value = val; });
+        setText('[data-mt-id]', m.id || '—');
+        setText('[data-mt-time]', m.time || '—');
+        const stageIdx = parseInt(m.stage || '1', 10);
+        setText('[data-mt-stage-label]', STAGE_LABELS[stageIdx - 1] || '—');
+        setVal('[data-mt-title-input]', m.title || '');
+        setVal('[data-mt-account-input]', m.account || '');
+        setVal('[data-mt-lawyer-select]', m.lawyer || '');
+        // Highlight current stage in the track
+        card.querySelectorAll('[data-mt-stage-track] li').forEach(li => {
+          li.classList.toggle('current', parseInt(li.dataset.stage, 10) === stageIdx);
+          li.classList.toggle('done',    parseInt(li.dataset.stage, 10) <  stageIdx);
+        });
+        card.dataset.stageIdx = stageIdx;
+        // Active status pill
+        card.querySelectorAll('.status-pill').forEach(p => {
+          p.classList.toggle('active', p.dataset.status === m.status);
+        });
+      }
       // Inject lawyer-specific values for rebalance modal
       if (name === 'rebalance' && ctx && ctx.lawyer) {
         const l = ctx.lawyer;
@@ -5362,8 +5869,47 @@ input, textarea, select { font: inherit; color: inherit; }
           receiverTarget: opener.dataset.lawyerReceiverTarget,
         };
       }
+      if (opener.dataset.matterId) {
+        ctx.matter = {
+          id: opener.dataset.matterId,
+          title: opener.dataset.matterTitle,
+          account: opener.dataset.matterAccount,
+          stage: opener.dataset.matterStage,
+          time: opener.dataset.matterTime,
+          lawyer: opener.dataset.matterLawyer,
+          status: opener.dataset.matterStatus,
+        };
+      }
       return ctx;
     };
+
+    // Stage stepper + status picker — local to the matter modal
+    const matterCard = stage.querySelector('[data-modal="matter"]');
+    if (matterCard) {
+      const STAGE_LABELS = ['Intake','Scope & assign','AI draft','Attorney review','Delivery','Closed'];
+      matterCard.addEventListener('click', (e) => {
+        const stepBtn = e.target.closest('[data-stage-dir]');
+        if (stepBtn) {
+          let idx = parseInt(matterCard.dataset.stageIdx || '1', 10);
+          const dir = parseInt(stepBtn.dataset.stageDir, 10);
+          idx = Math.max(1, Math.min(6, idx + dir));
+          matterCard.dataset.stageIdx = idx;
+          matterCard.querySelectorAll('[data-mt-stage-track] li').forEach(li => {
+            const s = parseInt(li.dataset.stage, 10);
+            li.classList.toggle('current', s === idx);
+            li.classList.toggle('done', s < idx);
+          });
+          matterCard.querySelectorAll('[data-mt-stage-label]').forEach(n => n.textContent = STAGE_LABELS[idx - 1]);
+          return;
+        }
+        const statusBtn = e.target.closest('.status-pill');
+        if (statusBtn) {
+          matterCard.querySelectorAll('.status-pill').forEach(p => p.classList.remove('active'));
+          statusBtn.classList.add('active');
+          return;
+        }
+      });
+    }
 
     document.body.addEventListener('click', (e) => {
       const opener = e.target.closest('[data-modal]');
