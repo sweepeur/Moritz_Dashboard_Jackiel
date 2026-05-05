@@ -63,6 +63,7 @@
   --sla-risk-bg: #f1d8d3;
   --margin-watch-bg: #f1e2c7;
   --info-bg: #d8dde6;
+  --status-info-fg: #5a5479;
 
   /* Voice card border (sage) */
   --voice-border: #cdd9c8;
@@ -177,6 +178,7 @@
   --sla-risk-bg: #3e2622;
   --margin-watch-bg: #3a2e1c;
   --info-bg: #1f242e;
+  --status-info-fg: #a39bc7;
 
   /* Voice card border — sage tint for dark */
   --voice-border: #3a4a36;
@@ -555,6 +557,20 @@ input, textarea, select { font: inherit; color: inherit; }
 }
 .lede-text .accent.watch { color: var(--status-margin-watch-fg); }
 .lede-text .accent.on-track { color: var(--status-on-track-fg); }
+.lede-text .accent.info { color: var(--status-info-fg); }
+.lede-text .accent[data-scroll-to] {
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  transition: text-decoration-color 160ms ease;
+}
+.lede-text .accent[data-scroll-to]:hover {
+  text-decoration-color: currentColor;
+}
+.kpi.kpi-link { cursor: pointer; }
+.kpi.kpi-link:hover { border-color: var(--muted-foreground); }
 .lede-text .accent[data-highlight] {
   cursor: pointer;
   text-decoration: underline;
@@ -666,7 +682,7 @@ input, textarea, select { font: inherit; color: inherit; }
    Reuses .module, .mod-head, .mod-title, .mod-sub, .mod-body
    from the operations view. Finance overrides are scoped.
    ===================================================== */
-.view-finance .kpi-strip { grid-template-columns: 1.55fr 1fr 1fr 1fr; }
+.view-finance .kpi-strip { grid-template-columns: repeat(5, 1fr); }
 
 .kpi-bar {
   margin-top: auto;
@@ -898,13 +914,25 @@ input, textarea, select { font: inherit; color: inherit; }
 }
 .concentration-bar {
   display: flex;
-  height: 8px;
+  height: 10px;
   border-radius: 999px;
   overflow: hidden;
   background: var(--secondary);
   margin-top: 8px;
 }
 .concentration-bar > div { height: 100%; }
+.concentration-bar .conc-seg {
+  cursor: pointer;
+  transition: filter 80ms ease, transform 80ms ease;
+  font-size: 0;
+  text-indent: -999em;
+}
+.concentration-bar .conc-seg:hover {
+  filter: brightness(1.1);
+  transform: scaleY(1.4);
+  position: relative;
+  z-index: 1;
+}
 .concentration-meta {
   display: flex;
   justify-content: space-between;
@@ -1280,6 +1308,7 @@ input, textarea, select { font: inherit; color: inherit; }
 .kpi-value.down { color: var(--status-sla-risk-fg); }
 .kpi-value.up    { color: var(--status-on-track-fg); }
 .kpi-value.watch { color: var(--status-margin-watch-fg); }
+.kpi-value.info  { color: var(--status-info-fg); }
 .kpi-sub {
   font-size: var(--fs-mini);
   color: var(--muted-foreground);
@@ -2103,6 +2132,45 @@ input, textarea, select { font: inherit; color: inherit; }
   line-height: 1;
   letter-spacing: -0.02em;
   color: var(--foreground);
+}
+
+/* Most recent sale — Operations bottom-left card */
+#recentSaleModule {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.recent-sale-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  padding-top: var(--space-lg);
+}
+.recent-sale-stat {
+  font-family: "Fraunces", serif;
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  color: var(--foreground);
+  margin-top: auto;
+}
+.recent-sale-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 14px;
+}
+.recent-sale-sku {
+  font-size: 16px;
+  color: var(--foreground);
+  font-weight: 400;
+}
+.recent-sale-account {
+  font-size: 16px;
+  color: var(--foreground);
+  font-weight: 500;
 }
 
 /* Payment mix — pie above legend, color-coded keys */
@@ -3380,6 +3448,17 @@ input, textarea, select { font: inherit; color: inherit; }
 }
 .toast .toast-undo:hover { background: color-mix(in srgb, var(--primary-foreground) 12%, transparent); }
 
+
+.margin-row[data-context],
+.funnel-row[data-context],
+.aging-row[data-context],
+.source-row[data-context],
+.chart-bar-col[data-context] {
+  cursor: help;
+}
+.chart-bar-col[data-context]:hover {
+  filter: brightness(1.06);
+}
 </style>
 </head>
 <body>
@@ -3517,7 +3596,7 @@ input, textarea, select { font: inherit; color: inherit; }
         <h1 class="h-lede lede-text">
           <span class="accent" data-highlight="qa">Four matters</span> need attention.
           <span class="accent watch" data-highlight="bench">Two lawyers</span> over capacity.
-          Earnings this month of <span class="accent on-track" data-highlight="revenue">$6,820</span>. This is <span class="accent on-track">+18%</span> from last month.
+          Earnings this month of <span class="accent on-track" data-scroll-to="finance" title="Open Finances">$284k</span>. This is <span class="accent on-track">+12%</span> from last month.
         </h1>
       </section>
 
@@ -3574,9 +3653,9 @@ input, textarea, select { font: inherit; color: inherit; }
         </div>
 
         <!-- 5 · Monthly earnings -->
-        <div class="kpi has-chart">
+        <div class="kpi has-chart kpi-link" data-scroll-to="finance" title="Open Finances">
           <div class="kpi-eyebrow">Monthly earnings</div>
-          <div class="kpi-value up">$6,820</div>
+          <div class="kpi-value up">$284k</div>
           <div class="kpi-sub">MTD</div>
           <div class="kpi-chart">
             <svg viewBox="0 0 160 60" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg" aria-label="Monthly earnings, weekly bars">
@@ -3591,7 +3670,7 @@ input, textarea, select { font: inherit; color: inherit; }
               </g>
             </svg>
           </div>
-          <span class="kpi-delta-pill up">+4%</span>
+          <span class="kpi-delta-pill up">+12%</span>
         </div>
       </section>
 
@@ -3769,6 +3848,22 @@ input, textarea, select { font: inherit; color: inherit; }
             </div>
           </div>
 
+          <!-- Most recent sale -->
+          <div class="module" id="recentSaleModule">
+            <div class="mod-head">
+              <div class="mod-head-titles">
+                <div class="mod-title">Most recent sale</div>
+                <div class="mod-sub">7 minutes ago</div>
+              </div>
+            </div>
+            <div class="mod-body recent-sale-body">
+              <div class="recent-sale-stat">$1,000</div>
+              <div class="recent-sale-meta">
+                <span class="recent-sale-sku">Contractor agreement</span>
+                <span class="recent-sale-account">Corafone</span>
+              </div>
+            </div>
+          </div>
 
         </div>
 
@@ -3956,7 +4051,7 @@ input, textarea, select { font: inherit; color: inherit; }
         <div id="finAnchor" class="view-anchor">
           <div class="view-anchor-eyebrow">Section 2 / 2</div>
           <h2 class="view-anchor-title">Finances</h2>
-          <p class="view-anchor-sub">Sales-style breakdown — revenue by SKU, top accounts, pipeline.</p>
+          <p class="view-anchor-sub">Earnings, retention, margins</p>
         </div>
 
         <!-- Page lede -->
@@ -3968,86 +4063,109 @@ input, textarea, select { font: inherit; color: inherit; }
             <span>Synced 2m ago</span>
           </div>
           <h1 class="h-lede lede-text">
-            <span class="accent" style="color: var(--status-on-track-fg);">$284k</span> booked this month, <span class="accent" style="color: var(--status-on-track-fg);">+12%</span> vs prior. SAFE redlines and Series-B docs drove growth; margin running <span class="accent watch">2.3% behind</span> on overruns.
+            <span class="accent on-track" data-scroll-to="finRevenueModule" title="Open revenue chart">$284k</span> booked this month, <span class="accent on-track" data-scroll-to="finBookingsModule" title="Open bookings vs revenue">+12%</span> vs prior. SAFE redlines and Series-B docs drove growth; <span class="accent info" data-scroll-to="finAccountsModule" title="Open top accounts">34</span> accounts currently active.
           </h1>
         </section>
 
-        <!-- KPI strip (4-up for finance) -->
+        <!-- KPI strip — 5-up for finance -->
         <section class="kpi-strip" id="finKpiStrip">
-          <!-- Hero: Net revenue with target progress -->
-          <div class="kpi hero">
-            <div class="kpi-eyebrow">Net revenue · MTD</div>
-            <div class="kpi-value">$284k</div>
-            <div class="kpi-sub">delivered + invoiced · 92% to $310k target</div>
-            <div style="margin-top: auto; padding-top: 14px;">
-              <div class="kpi-bar"><div class="fill" style="width: 92%"></div></div>
-              <div class="kpi-bar-meta"><span>$0</span><span>$310k target</span></div>
+
+          <!-- 1 · Net revenue -->
+          <div class="kpi has-chart kpi-link" data-scroll-to="finRevenueModule" title="Open revenue chart">
+            <div class="kpi-eyebrow">Net revenue</div>
+            <div class="kpi-value up">$284k</div>
+            <div class="kpi-sub">MTD</div>
+            <div class="kpi-chart">
+              <svg viewBox="0 0 200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-label="Net revenue daily sparkline">
+                <defs>
+                  <linearGradient id="finNetRevFill" x1="0" x2="0" y1="0" y2="1">
+                    <stop offset="0%"  stop-color="#9ec1de" stop-opacity="0.55"/>
+                    <stop offset="100%" stop-color="#9ec1de" stop-opacity="0.10"/>
+                  </linearGradient>
+                </defs>
+                <line x1="0" y1="59.5" x2="200" y2="59.5" stroke="#9ec1de" stroke-width="0.5" opacity="0.4"/>
+                <path d="M0 38 L7 30 L14 42 L21 26 L28 36 L35 22 L42 32 L49 18 L56 28 L63 14 L70 24 L77 20 L84 30 L91 16 L98 26 L105 12 L112 22 L119 18 L126 28 L133 14 L140 24 L147 10 L154 20 L161 16 L168 26 L175 12 L182 22 L189 8 L196 18 L200 14 L200 60 L0 60 Z"
+                      fill="url(#finNetRevFill)"/>
+                <path d="M0 38 L7 30 L14 42 L21 26 L28 36 L35 22 L42 32 L49 18 L56 28 L63 14 L70 24 L77 20 L84 30 L91 16 L98 26 L105 12 L112 22 L119 18 L126 28 L133 14 L140 24 L147 10 L154 20 L161 16 L168 26 L175 12 L182 22 L189 8 L196 18 L200 14"
+                      fill="none" stroke="#5a8db8" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round" opacity="0.85"/>
+              </svg>
             </div>
+            <span class="kpi-delta-pill up">+12%</span>
           </div>
 
-          <!-- Avg fee per matter -->
-          <div class="kpi">
-            <div class="kpi-eyebrow">Avg fee per matter</div>
-            <div class="kpi-value">$1.1k</div>
-            <div class="kpi-sub">flat-fee average across delivered matters</div>
+          <!-- 2 · Avg fee -->
+          <div class="kpi has-chart kpi-link" data-scroll-to="finSkuModule" title="Open SKU breakdown">
+            <div class="kpi-eyebrow">Avg fee</div>
+            <div class="kpi-value info">$1.1k</div>
+            <div class="kpi-sub">per matter</div>
             <div class="kpi-chart">
-              <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
-                <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$6k</text>
-                <text x="0" y="50" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$5k</text>
-                <text x="0" y="86" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$4k</text>
-                <line x1="22" y1="10" x2="200" y2="10" stroke="var(--border)" stroke-dasharray="2 3"/>
-                <line x1="22" y1="46" x2="200" y2="46" stroke="var(--border)" stroke-dasharray="2 3"/>
-                <line x1="22" y1="82" x2="200" y2="82" stroke="var(--border)"/>
-                <path d="M26 64 L48 60 L70 58 L92 54 L114 48 L136 44 L158 40 L180 36 L196 32"
-                      fill="none" stroke="var(--sku-1)" stroke-width="1.5" stroke-linejoin="round"/>
-                <line x1="194" y1="26" x2="198" y2="38" stroke="var(--foreground)" stroke-width="2" stroke-linecap="round"/>
+              <svg viewBox="0 0 200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-label="Avg fee per matter — recent variation">
+                <path d="M0 32 C5 26 8 38 13 30 S20 22 26 30 S33 40 39 32 S46 18 52 28 S59 36 65 26 S72 22 78 32 S85 42 91 30 S98 16 104 28 S111 36 117 26 S124 22 130 32 S137 40 143 28 S150 16 156 26 S163 36 169 28 S176 22 182 30 S189 38 195 28 L200 30"
+                      fill="none" stroke="var(--status-info-fg)" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round" opacity="0.85"/>
               </svg>
             </div>
           </div>
 
-          <!-- Fees processed -->
-          <div class="kpi">
-            <div class="kpi-eyebrow">Fees processed, MTD</div>
-            <div class="kpi-value">258</div>
-            <div class="kpi-sub">flat-fee transactions invoiced</div>
+          <!-- 3 · Fees processed -->
+          <div class="kpi kpi-link" data-scroll-to="finMarginModule" title="Open margin by SKU">
+            <div class="kpi-eyebrow">Fees processed</div>
+            <div class="kpi-value watch">258</div>
+            <div class="kpi-sub">MTD</div>
+            <span class="kpi-delta-pill up">+18%</span>
+          </div>
+
+          <!-- 4 · Active accounts -->
+          <div class="kpi has-chart kpi-link" data-scroll-to="finAccountsModule" title="Open top accounts">
+            <div class="kpi-eyebrow">Active accounts</div>
+            <div class="kpi-value info">34</div>
+            <div class="kpi-sub">MTD</div>
             <div class="kpi-chart">
-              <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
-                <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">60</text>
-                <text x="2" y="50" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">30</text>
-                <text x="2" y="86" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">0</text>
-                <line x1="22" y1="10" x2="200" y2="10" stroke="var(--border)" stroke-dasharray="2 3"/>
-                <line x1="22" y1="46" x2="200" y2="46" stroke="var(--border)" stroke-dasharray="2 3"/>
-                <line x1="22" y1="82" x2="200" y2="82" stroke="var(--border)"/>
-                <rect x="26" y="58" width="14" height="24" fill="var(--sku-1)" opacity="0.55"/>
-                <rect x="46" y="50" width="14" height="32" fill="var(--sku-1)" opacity="0.6"/>
-                <rect x="66" y="54" width="14" height="28" fill="var(--sku-1)" opacity="0.7"/>
-                <rect x="86" y="44" width="14" height="38" fill="var(--sku-1)" opacity="0.75"/>
-                <rect x="106" y="40" width="14" height="42" fill="var(--sku-1)" opacity="0.85"/>
-                <rect x="126" y="36" width="14" height="46" fill="var(--sku-1)" opacity="0.9"/>
-                <rect x="146" y="32" width="14" height="50" fill="var(--sku-1)"/>
-                <rect x="166" y="20" width="14" height="62" fill="var(--foreground)"/>
+              <svg viewBox="0 0 200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-label="Active accounts daily bars">
+                <g fill="#5a8db8" opacity="0.85">
+                  <rect x="2"   y="36" width="3" height="24"/>
+                  <rect x="8"   y="22" width="3" height="38"/>
+                  <rect x="14"  y="42" width="3" height="18"/>
+                  <rect x="20"  y="28" width="3" height="32"/>
+                  <rect x="26"  y="16" width="3" height="44"/>
+                  <rect x="32"  y="34" width="3" height="26"/>
+                  <rect x="38"  y="20" width="3" height="40"/>
+                  <rect x="44"  y="38" width="3" height="22"/>
+                  <rect x="50"  y="14" width="3" height="46"/>
+                  <rect x="56"  y="26" width="3" height="34"/>
+                  <rect x="62"  y="32" width="3" height="28"/>
+                  <rect x="68"  y="18" width="3" height="42"/>
+                  <rect x="74"  y="40" width="3" height="20"/>
+                  <rect x="80"  y="24" width="3" height="36"/>
+                  <rect x="86"  y="10" width="3" height="50"/>
+                  <rect x="92"  y="30" width="3" height="30"/>
+                  <rect x="98"  y="22" width="3" height="38"/>
+                  <rect x="104" y="36" width="3" height="24"/>
+                  <rect x="110" y="14" width="3" height="46"/>
+                  <rect x="116" y="28" width="3" height="32"/>
+                  <rect x="122" y="40" width="3" height="20"/>
+                  <rect x="128" y="20" width="3" height="40"/>
+                  <rect x="134" y="32" width="3" height="28"/>
+                  <rect x="140" y="16" width="3" height="44"/>
+                  <rect x="146" y="36" width="3" height="24"/>
+                  <rect x="152" y="22" width="3" height="38"/>
+                  <rect x="158" y="12" width="3" height="48"/>
+                  <rect x="164" y="28" width="3" height="32"/>
+                  <rect x="170" y="38" width="3" height="22"/>
+                  <rect x="176" y="20" width="3" height="40"/>
+                  <rect x="182" y="32" width="3" height="28"/>
+                  <rect x="188" y="14" width="3" height="46"/>
+                  <rect x="194" y="26" width="3" height="34"/>
+                </g>
               </svg>
             </div>
           </div>
 
-          <!-- Bookings · MTD (replaces Days to invoice) -->
-          <div class="kpi">
-            <div class="kpi-eyebrow">Bookings, MTD</div>
-            <div class="kpi-value">$321k</div>
-            <div class="kpi-sub">signed work · 33 matters in flight</div>
-            <div class="kpi-chart">
-              <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
-                <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$400</text>
-                <text x="0" y="50" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$200</text>
-                <text x="0" y="86" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">$0</text>
-                <line x1="32" y1="10" x2="200" y2="10" stroke="var(--border)" stroke-dasharray="2 3"/>
-                <line x1="32" y1="46" x2="200" y2="46" stroke="var(--border)" stroke-dasharray="2 3"/>
-                <line x1="32" y1="82" x2="200" y2="82" stroke="var(--border)"/>
-                <path d="M36 60 L58 56 L80 50 L102 44 L124 38 L146 32 L168 26 L188 20 L196 16"
-                      fill="none" stroke="var(--sku-1)" stroke-width="1.5" stroke-linejoin="round"/>
-                <line x1="194" y1="10" x2="198" y2="22" stroke="var(--foreground)" stroke-width="2" stroke-linecap="round"/>
-              </svg>
-            </div>
+          <!-- 5 · Bookings -->
+          <div class="kpi kpi-link" data-scroll-to="finBookingsModule" title="Open bookings vs revenue">
+            <div class="kpi-eyebrow">Bookings</div>
+            <div class="kpi-value up">$321k</div>
+            <div class="kpi-sub">MTD</div>
+            <span class="kpi-delta-pill up">+2%</span>
           </div>
         </section>
 
@@ -4056,7 +4174,7 @@ input, textarea, select { font: inherit; color: inherit; }
 
           <!-- Left col: stacked chart + SKU table -->
           <div class="col">
-            <div class="module">
+            <div class="module" id="finRevenueModule">
               <div class="mod-head">
                 <div class="mod-head-titles">
                   <div class="mod-title">Revenue · last 12 months</div>
@@ -4076,7 +4194,7 @@ input, textarea, select { font: inherit; color: inherit; }
                     <span>$320k</span><span>$240k</span><span>$160k</span><span>$80k</span><span>$0</span>
                   </div>
                   <div class="chart-stacked">
-                    <div class="chart-bar-col">
+                    <div class="chart-bar-col" data-context="Jun · $182k · −7% MoM">
                       <div class="chart-bar-seg" style="height: 12px; background: var(--sku-6)"></div>
                       <div class="chart-bar-seg" style="height: 16px; background: var(--sku-5)"></div>
                       <div class="chart-bar-seg" style="height: 22px; background: var(--sku-4)"></div>
@@ -4086,7 +4204,7 @@ input, textarea, select { font: inherit; color: inherit; }
                       <div class="target-line" style="top: 12px"></div>
                       <span class="month-label">Jun</span>
                     </div>
-                    <div class="chart-bar-col">
+                    <div class="chart-bar-col" data-context="Jul · $192k · +5% MoM">
                       <div class="chart-bar-seg" style="height: 14px; background: var(--sku-6)"></div>
                       <div class="chart-bar-seg" style="height: 18px; background: var(--sku-5)"></div>
                       <div class="chart-bar-seg" style="height: 20px; background: var(--sku-4)"></div>
@@ -4096,7 +4214,7 @@ input, textarea, select { font: inherit; color: inherit; }
                       <div class="target-line" style="top: 6px"></div>
                       <span class="month-label">Jul</span>
                     </div>
-                    <div class="chart-bar-col">
+                    <div class="chart-bar-col" data-context="Aug · $172k · −10% MoM">
                       <div class="chart-bar-seg" style="height: 10px; background: var(--sku-6)"></div>
                       <div class="chart-bar-seg" style="height: 14px; background: var(--sku-5)"></div>
                       <div class="chart-bar-seg" style="height: 18px; background: var(--sku-4)"></div>
@@ -4106,7 +4224,7 @@ input, textarea, select { font: inherit; color: inherit; }
                       <div class="target-line" style="top: 18px"></div>
                       <span class="month-label">Aug</span>
                     </div>
-                    <div class="chart-bar-col">
+                    <div class="chart-bar-col" data-context="Sep · $200k · +16% MoM">
                       <div class="chart-bar-seg" style="height: 14px; background: var(--sku-6)"></div>
                       <div class="chart-bar-seg" style="height: 18px; background: var(--sku-5)"></div>
                       <div class="chart-bar-seg" style="height: 22px; background: var(--sku-4)"></div>
@@ -4116,7 +4234,7 @@ input, textarea, select { font: inherit; color: inherit; }
                       <div class="target-line" style="top: 8px"></div>
                       <span class="month-label">Sep</span>
                     </div>
-                    <div class="chart-bar-col">
+                    <div class="chart-bar-col" data-context="Oct · $230k · +15% MoM">
                       <div class="chart-bar-seg" style="height: 16px; background: var(--sku-6)"></div>
                       <div class="chart-bar-seg" style="height: 20px; background: var(--sku-5)"></div>
                       <div class="chart-bar-seg" style="height: 24px; background: var(--sku-4)"></div>
@@ -4126,7 +4244,7 @@ input, textarea, select { font: inherit; color: inherit; }
                       <div class="target-line" style="top: -2px"></div>
                       <span class="month-label">Oct</span>
                     </div>
-                    <div class="chart-bar-col">
+                    <div class="chart-bar-col" data-context="Nov · $208k · −10% MoM">
                       <div class="chart-bar-seg" style="height: 12px; background: var(--sku-6)"></div>
                       <div class="chart-bar-seg" style="height: 16px; background: var(--sku-5)"></div>
                       <div class="chart-bar-seg" style="height: 20px; background: var(--sku-4)"></div>
@@ -4136,7 +4254,7 @@ input, textarea, select { font: inherit; color: inherit; }
                       <div class="target-line" style="top: 14px"></div>
                       <span class="month-label">Nov</span>
                     </div>
-                    <div class="chart-bar-col">
+                    <div class="chart-bar-col" data-context="Dec · $172k · −17% MoM">
                       <div class="chart-bar-seg" style="height: 8px; background: var(--sku-6)"></div>
                       <div class="chart-bar-seg" style="height: 12px; background: var(--sku-5)"></div>
                       <div class="chart-bar-seg" style="height: 16px; background: var(--sku-4)"></div>
@@ -4146,7 +4264,7 @@ input, textarea, select { font: inherit; color: inherit; }
                       <div class="target-line" style="top: 24px"></div>
                       <span class="month-label">Dec</span>
                     </div>
-                    <div class="chart-bar-col">
+                    <div class="chart-bar-col" data-context="Jan · $208k · +21% MoM">
                       <div class="chart-bar-seg" style="height: 12px; background: var(--sku-6)"></div>
                       <div class="chart-bar-seg" style="height: 18px; background: var(--sku-5)"></div>
                       <div class="chart-bar-seg" style="height: 22px; background: var(--sku-4)"></div>
@@ -4156,7 +4274,7 @@ input, textarea, select { font: inherit; color: inherit; }
                       <div class="target-line" style="top: 8px"></div>
                       <span class="month-label">Jan</span>
                     </div>
-                    <div class="chart-bar-col">
+                    <div class="chart-bar-col" data-context="Feb · $244k · +17% MoM">
                       <div class="chart-bar-seg" style="height: 16px; background: var(--sku-6)"></div>
                       <div class="chart-bar-seg" style="height: 22px; background: var(--sku-5)"></div>
                       <div class="chart-bar-seg" style="height: 24px; background: var(--sku-4)"></div>
@@ -4166,7 +4284,7 @@ input, textarea, select { font: inherit; color: inherit; }
                       <div class="target-line" style="top: -8px"></div>
                       <span class="month-label">Feb</span>
                     </div>
-                    <div class="chart-bar-col">
+                    <div class="chart-bar-col" data-context="Mar · $228k · −7% MoM">
                       <div class="chart-bar-seg" style="height: 14px; background: var(--sku-6)"></div>
                       <div class="chart-bar-seg" style="height: 20px; background: var(--sku-5)"></div>
                       <div class="chart-bar-seg" style="height: 22px; background: var(--sku-4)"></div>
@@ -4176,7 +4294,7 @@ input, textarea, select { font: inherit; color: inherit; }
                       <div class="target-line" style="top: -2px"></div>
                       <span class="month-label">Mar</span>
                     </div>
-                    <div class="chart-bar-col">
+                    <div class="chart-bar-col" data-context="Apr · $260k · +14% MoM">
                       <div class="chart-bar-seg" style="height: 18px; background: var(--sku-6)"></div>
                       <div class="chart-bar-seg" style="height: 22px; background: var(--sku-5)"></div>
                       <div class="chart-bar-seg" style="height: 26px; background: var(--sku-4)"></div>
@@ -4186,7 +4304,7 @@ input, textarea, select { font: inherit; color: inherit; }
                       <div class="target-line" style="top: -16px"></div>
                       <span class="month-label">Apr</span>
                     </div>
-                    <div class="chart-bar-col current">
+                    <div class="chart-bar-col current" data-context="May · $284k · +9% MoM · MTD">
                       <div class="chart-bar-seg" style="height: 16px; background: var(--sku-6)"></div>
                       <div class="chart-bar-seg" style="height: 22px; background: var(--sku-5)"></div>
                       <div class="chart-bar-seg" style="height: 28px; background: var(--sku-4)"></div>
@@ -4210,7 +4328,7 @@ input, textarea, select { font: inherit; color: inherit; }
             </div>
 
             <!-- SKU breakdown -->
-            <div class="module">
+            <div class="module" id="finSkuModule">
               <div class="mod-head">
                 <div class="mod-head-titles">
                   <div class="mod-title">Revenue by SKU · MTD</div>
@@ -4301,7 +4419,7 @@ input, textarea, select { font: inherit; color: inherit; }
             </div>
 
             <!-- Margin by SKU -->
-            <div class="module">
+            <div class="module" id="finMarginModule">
               <div class="mod-head">
                 <div class="mod-head-titles">
                   <div class="mod-title">Margin by SKU</div>
@@ -4310,32 +4428,32 @@ input, textarea, select { font: inherit; color: inherit; }
               </div>
               <div class="mod-body">
                 <div class="margin-bars">
-                  <div class="margin-row">
+                  <div class="margin-row" data-context="SAFE / Convertibles margin · 32% · $850 fee · $578 loaded cost · $272 net per matter · 68 delivered MTD">
                     <span class="margin-label"><span class="margin-dot" style="background: var(--sku-1)"></span>SAFE / Convertibles</span>
                     <div class="margin-bar"><div class="fill" style="width: 80%; background: var(--sku-1);"></div></div>
                     <span class="margin-pct">32%</span>
                   </div>
-                  <div class="margin-row">
+                  <div class="margin-row" data-context="DPA / Privacy margin · 28% · $1.2k fee · $864 loaded cost · $336 net per matter · 56 delivered MTD">
                     <span class="margin-label"><span class="margin-dot" style="background: var(--sku-3)"></span>DPA / Privacy</span>
                     <div class="margin-bar"><div class="fill" style="width: 70%; background: var(--sku-3);"></div></div>
                     <span class="margin-pct">28%</span>
                   </div>
-                  <div class="margin-row">
+                  <div class="margin-row" data-context="IP / Trademark margin · 24% · $1.4k fee · $1.06k loaded cost · $336 net per matter · 22 delivered MTD">
                     <span class="margin-label"><span class="margin-dot" style="background: var(--sku-5)"></span>IP / Trademark</span>
                     <div class="margin-bar"><div class="fill" style="width: 60%; background: var(--sku-5);"></div></div>
                     <span class="margin-pct">24%</span>
                   </div>
-                  <div class="margin-row">
+                  <div class="margin-row" data-context="MSA / Commercial margin · 21% · $2.4k fee · $1.9k loaded cost · $504 net per matter · 35 delivered MTD">
                     <span class="margin-label"><span class="margin-dot" style="background: var(--sku-2)"></span>MSA / Commercial</span>
                     <div class="margin-bar"><div class="fill" style="width: 52%; background: var(--sku-2);"></div></div>
                     <span class="margin-pct">21%</span>
                   </div>
-                  <div class="margin-row">
+                  <div class="margin-row" data-context="Misc commercial margin · 18% · $400 fee · $328 loaded cost · $72 net per matter · 27 delivered MTD">
                     <span class="margin-label"><span class="margin-dot" style="background: var(--sku-6)"></span>Misc commercial</span>
                     <div class="margin-bar"><div class="fill" style="width: 45%; background: var(--sku-6);"></div></div>
                     <span class="margin-pct">18%</span>
                   </div>
-                  <div class="margin-row">
+                  <div class="margin-row" data-context="Employment review margin · 14% · $650 fee · $559 loaded cost · $91 net per matter · 50 delivered MTD">
                     <span class="margin-label"><span class="margin-dot" style="background: var(--sku-4)"></span>Employment review</span>
                     <div class="margin-bar"><div class="fill" style="width: 35%; background: var(--sku-4);"></div></div>
                     <span class="margin-pct">14%</span>
@@ -4438,12 +4556,12 @@ input, textarea, select { font: inherit; color: inherit; }
                 <div class="concentration">
                   <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted-foreground); font-weight: 500;">Concentration</div>
                   <div class="concentration-bar">
-                    <div style="width: 15%; background: var(--sku-1)" title="Plaid"></div>
-                    <div style="width: 13%; background: var(--sku-2)" title="Linear"></div>
-                    <div style="width: 10%; background: var(--sku-3)" title="Notion"></div>
-                    <div style="width: 8%; background: var(--sku-4)" title="Vanta"></div>
-                    <div style="width: 6%; background: var(--sku-5)" title="Ramp"></div>
-                    <div style="width: 48%; background: var(--accent-3)" title="Other"></div>
+                    <div class="conc-seg" style="width: 15%; background: var(--sku-1)" data-context="Plaid · 15% of MTD revenue · $42k · 6 matters · Series B">Plaid</div>
+                    <div class="conc-seg" style="width: 13%; background: var(--sku-2)" data-context="Linear · 13% of MTD revenue · $38k · 5 matters · Series A">Linear</div>
+                    <div class="conc-seg" style="width: 10%; background: var(--sku-3)" data-context="Notion · 10% of MTD revenue · $28k · 4 matters · Series C">Notion</div>
+                    <div class="conc-seg" style="width: 8%;  background: var(--sku-4)" data-context="Vanta · 8% of MTD revenue · $22k · 4 matters · Series B">Vanta</div>
+                    <div class="conc-seg" style="width: 6%;  background: var(--sku-5)" data-context="Ramp · 6% of MTD revenue · $18k · 3 matters · Series C">Ramp</div>
+                    <div class="conc-seg" style="width: 48%; background: var(--accent-3)" data-context="12 other accounts · 48% of MTD revenue · $96k · 35 matters">Other 12 accounts</div>
                   </div>
                   <div class="concentration-meta">
                     <span>Top 5 · 53%</span>
@@ -4455,7 +4573,7 @@ input, textarea, select { font: inherit; color: inherit; }
             </div>
 
             <!-- Pipeline · source attribution + funnel -->
-            <div class="module">
+            <div class="module" id="finPipelineModule">
               <div class="mod-head">
                 <div class="mod-head-titles">
                   <div class="mod-title">Pipeline · last 30d</div>
@@ -4469,7 +4587,7 @@ input, textarea, select { font: inherit; color: inherit; }
                     <span class="label">Source mix</span>
                     <span class="meta">Warm channels = 79% of revenue</span>
                   </div>
-                  <div class="source-row">
+                  <div class="source-row" data-context="VC partner referrals · $158k · 12 deals closed · 86% win rate · warmest channel · cycle 4.2d">
                     <div class="source-label"><span class="source-dot" style="background: var(--sku-1)"></span>VC partner referrals</div>
                     <div class="source-bar"><div class="fill" style="width: 100%; background: var(--sku-1);"></div></div>
                     <div class="source-stats">
@@ -4477,7 +4595,7 @@ input, textarea, select { font: inherit; color: inherit; }
                       <span class="meta">12 closed · 86% win</span>
                     </div>
                   </div>
-                  <div class="source-row">
+                  <div class="source-row" data-context="Founder referrals · $94k · 8 deals closed · 73% win rate · second-warmest · cycle 6.1d">
                     <div class="source-label"><span class="source-dot" style="background: var(--sku-3)"></span>Founder referrals</div>
                     <div class="source-bar"><div class="fill" style="width: 60%; background: var(--sku-3);"></div></div>
                     <div class="source-stats">
@@ -4485,7 +4603,7 @@ input, textarea, select { font: inherit; color: inherit; }
                       <span class="meta">8 closed · 73% win</span>
                     </div>
                   </div>
-                  <div class="source-row">
+                  <div class="source-row" data-context="Inbound (web · SEO) · $52k · 6 deals closed · 54% win rate · cycle 9.4d · longest stage: discovery">
                     <div class="source-label"><span class="source-dot" style="background: var(--sku-2)"></span>Inbound (web · SEO)</div>
                     <div class="source-bar"><div class="fill" style="width: 33%; background: var(--sku-2);"></div></div>
                     <div class="source-stats">
@@ -4493,7 +4611,7 @@ input, textarea, select { font: inherit; color: inherit; }
                       <span class="meta">6 closed · 55% win</span>
                     </div>
                   </div>
-                  <div class="source-row">
+                  <div class="source-row" data-context="Outbound (LI · email) · $17k · 2 deals closed · 29% win rate · coldest · cycle 14d · pricing pushback">
                     <div class="source-label"><span class="source-dot" style="background: var(--sku-4)"></span>Outbound (LI · email)</div>
                     <div class="source-bar"><div class="fill" style="width: 11%; background: var(--sku-4);"></div></div>
                     <div class="source-stats">
@@ -4509,10 +4627,10 @@ input, textarea, select { font: inherit; color: inherit; }
                     <span class="meta">Avg deal $11.5k · cycle 8.5d</span>
                   </div>
                   <div class="funnel">
-                    <div class="funnel-row"><span class="funnel-stage">Lead intake</span><div class="funnel-bar"><div class="fill" style="width: 100%"></div></div><span class="funnel-count">82</span><span class="funnel-conv">—</span></div>
-                    <div class="funnel-row"><span class="funnel-stage">Discovery</span><div class="funnel-bar"><div class="fill" style="width: 78%"></div></div><span class="funnel-count">64</span><span class="funnel-conv">78%</span></div>
-                    <div class="funnel-row"><span class="funnel-stage">Proposal sent</span><div class="funnel-bar"><div class="fill" style="width: 51%"></div></div><span class="funnel-count">42</span><span class="funnel-conv lossy">66%</span></div>
-                    <div class="funnel-row"><span class="funnel-stage">Engaged</span><div class="funnel-bar"><div class="fill" style="width: 34%"></div></div><span class="funnel-count">28</span><span class="funnel-conv">67%</span></div>
+                    <div class="funnel-row" data-context="Lead intake · 82 (— conv.) · 82 leads sourced last 30 days · top channels: VC referral 41, founder referral 22, inbound 11"><span class="funnel-stage">Lead intake</span><div class="funnel-bar"><div class="fill" style="width: 100%"></div></div><span class="funnel-count">82</span><span class="funnel-conv">—</span></div>
+                    <div class="funnel-row" data-context="Discovery · 64 (78% conv.) · 64 of 82 progressed past intro call · 78% conversion · drop-off: out-of-scope or budget"><span class="funnel-stage">Discovery</span><div class="funnel-bar"><div class="fill" style="width: 78%"></div></div><span class="funnel-count">64</span><span class="funnel-conv">78%</span></div>
+                    <div class="funnel-row" data-context="Proposal sent · 42 (66% conv.) · 42 of 64 received pricing proposals · 66% conversion · this is the bottleneck — pricing discussion"><span class="funnel-stage">Proposal sent</span><div class="funnel-bar"><div class="fill" style="width: 51%"></div></div><span class="funnel-count">42</span><span class="funnel-conv lossy">66%</span></div>
+                    <div class="funnel-row" data-context="Engaged · 28 (67% conv.) · 28 of 42 signed engagement letters · 67% conversion · avg deal size $11.5k · cycle 8.5 days"><span class="funnel-stage">Engaged</span><div class="funnel-bar"><div class="fill" style="width: 34%"></div></div><span class="funnel-count">28</span><span class="funnel-conv">67%</span></div>
                   </div>
                 </div>
 
@@ -4520,7 +4638,7 @@ input, textarea, select { font: inherit; color: inherit; }
             </div>
 
             <!-- Receivables · aging -->
-            <div class="module">
+            <div class="module" id="finReceivablesModule">
               <div class="mod-head">
                 <div class="mod-head-titles">
                   <div class="mod-title">Receivables · aging</div>
@@ -4534,17 +4652,17 @@ input, textarea, select { font: inherit; color: inherit; }
                   <div class="aging-segment" style="width: 4%; background: var(--status-sla-risk-fg);" title="60+: $9k"></div>
                 </div>
                 <div class="aging-rows">
-                  <div class="aging-row">
+                  <div class="aging-row" data-context="0–30 days · $223k · 27 invoices · 12 customers · 84% of receivables · within terms · expected this week">
                     <span class="aging-bucket"><span class="aging-dot" style="background: var(--status-on-track-fg)"></span>0–30 days</span>
                     <span class="aging-amount">$223k</span>
                     <span class="aging-share">84%</span>
                   </div>
-                  <div class="aging-row">
+                  <div class="aging-row" data-context="30–60 days · $32k · 8 invoices · 6 customers · 12% of receivables · gentle nudge · auto-reminder Friday">
                     <span class="aging-bucket"><span class="aging-dot" style="background: var(--status-margin-watch-fg)"></span>30–60 days</span>
                     <span class="aging-amount">$32k</span>
                     <span class="aging-share">12%</span>
                   </div>
-                  <div class="aging-row">
+                  <div class="aging-row" data-context="60+ days · $10k · 3 invoices · 2 customers · 4% of receivables · escalate to AR collections · oldest 87 days">
                     <span class="aging-bucket"><span class="aging-dot" style="background: var(--status-sla-risk-fg)"></span>60+ days</span>
                     <span class="aging-amount">$9k</span>
                     <span class="aging-share">4%</span>
@@ -4561,7 +4679,7 @@ input, textarea, select { font: inherit; color: inherit; }
         </section>
 
         <!-- Bookings vs Revenue cumulative (full width) -->
-        <section class="module">
+        <section class="module" id="finBookingsModule">
           <div class="mod-head">
             <div class="mod-head-titles">
               <div class="mod-title">Bookings vs revenue · trailing 6 months</div>
@@ -5499,9 +5617,10 @@ input, textarea, select { font: inherit; color: inherit; }
       let activeRow = null;
 
       document.body.addEventListener('mouseover', (e) => {
-        const row = e.target.closest('.qa-row[data-context]');
+        const row = e.target.closest('[data-context]');
         if (!row) return;
-        if (row.classList.contains('dismissed')) return;
+        // Skip qa-rows that have been dismissed
+        if (row.classList.contains('qa-row') && row.classList.contains('dismissed')) return;
         activeRow = row;
         show(row, e.clientX, e.clientY);
       });
@@ -5509,13 +5628,13 @@ input, textarea, select { font: inherit; color: inherit; }
       document.body.addEventListener('mousemove', (e) => {
         if (!activeRow || !pop.classList.contains('show')) return;
         // Only follow while still over the active row
-        const row = e.target.closest('.qa-row[data-context]');
+        const row = e.target.closest('[data-context]');
         if (row !== activeRow) return;
         placeAtCursor(e.clientX, e.clientY);
       });
 
       document.body.addEventListener('mouseout', (e) => {
-        const row = e.target.closest('.qa-row[data-context]');
+        const row = e.target.closest('[data-context]');
         if (!row) return;
         const related = e.relatedTarget;
         if (related && row.contains(related)) return;
@@ -5602,6 +5721,18 @@ input, textarea, select { font: inherit; color: inherit; }
     });
 
     document.body.addEventListener('click', (e) => {
+      const jump = e.target.closest('[data-scroll-to]');
+      if (jump) {
+        const target = jump.dataset.scrollTo === 'finance'
+          ? document.getElementById('finAnchor')
+          : document.getElementById(jump.dataset.scrollTo);
+        if (target) {
+          e.preventDefault();
+          const top = target.getBoundingClientRect().top + window.scrollY - 80;
+          window.scrollTo({ top, behavior: 'smooth' });
+          return;
+        }
+      }
       const trigger = e.target.closest('[data-highlight]');
       if (!trigger) return;
       e.preventDefault();
