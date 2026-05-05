@@ -1728,6 +1728,90 @@ input, textarea, select { font: inherit; color: inherit; }
 }
 
 /* =====================================================
+   Accounts module — book of business
+   ===================================================== */
+.acct-row {
+  display: grid;
+  grid-template-columns: 8px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 6px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 80ms ease;
+}
+.acct-row + .acct-row { border-top: 1px solid var(--border-1); }
+.acct-row:hover { background: var(--accent-3); }
+.acct-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  display: inline-block;
+}
+.acct-status-dot[data-s="risk"]  { background: var(--status-sla-risk-fg); }
+.acct-status-dot[data-s="watch"] { background: var(--status-margin-watch-fg); }
+.acct-status-dot[data-s="ok"]    { background: var(--status-on-track-fg); }
+.acct-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.acct-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.acct-name {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--foreground);
+  letter-spacing: -0.005em;
+}
+.acct-tag {
+  font-family: "Geist Mono", monospace;
+  font-size: 10px;
+  color: var(--muted-foreground);
+  background: var(--secondary);
+  padding: 1px 6px;
+  border-radius: 999px;
+  letter-spacing: 0.02em;
+}
+.acct-meta {
+  font-family: "Geist Mono", monospace;
+  font-size: 11px;
+  color: var(--muted-foreground);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.acct-mrr-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0;
+  flex-shrink: 0;
+}
+.acct-mrr {
+  font-family: "Fraunces", serif;
+  font-weight: 500;
+  font-size: 18px;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+  line-height: 1;
+}
+.acct-mrr-sub {
+  font-family: "Geist Mono", monospace;
+  font-size: 9px;
+  color: var(--muted-foreground);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* =====================================================
    Revenue chart card — natural height, fixed chart band
    ===================================================== */
 .chart-card {
@@ -2165,7 +2249,7 @@ input, textarea, select { font: inherit; color: inherit; }
 }
 
 /* Mobile: tap module / chart-card head to collapse the body */
-@media (max-width: 1024px) {
+@media (max-width: 820px) {
   .module > .mod-head,
   .chart-card > .chart-head {
     cursor: pointer;
@@ -2413,7 +2497,7 @@ input, textarea, select { font: inherit; color: inherit; }
   margin-left: 0;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 820px) {
   .float-settings { flex-wrap: wrap; max-width: calc(100vw - 24px); border-radius: 14px; padding: 10px 12px; }
   .float-settings-title { width: 100%; border-right: 0; padding-right: 0; padding-bottom: 4px; border-bottom: 1px solid var(--border-1); margin-bottom: 4px; }
   .float-settings .group + .group { border-left: 0; padding-left: 0; }
@@ -2441,17 +2525,17 @@ input, textarea, select { font: inherit; color: inherit; }
 /* =====================================================
    Responsive
    ===================================================== */
-@media (max-width: 1280px) {
+@media (max-width: 1100px) {
   .app, .app.rail-collapsed {
     grid-template-columns: var(--sidebar-w) 1fr 48px;
   }
-  /* Force collapsed visual at <1280, regardless of toggle state */
+  /* Force collapsed visual at <1100, regardless of toggle state */
   .rail > *:not(.rail-collapsed-content) { display: none; }
   .rail .rail-collapsed-content { display: flex; }
   .rail { padding: 0; align-items: stretch; }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 820px) {
   .app, .app.rail-collapsed {
     grid-template-columns: 1fr;
     grid-template-rows: var(--top-nav-h) 1fr;
@@ -3624,6 +3708,102 @@ input, textarea, select { font: inherit; color: inherit; }
                 <span class="summary">avg util 84% · 2 over cap · 144h booked · click an over-cap row to rebalance</span>
                 <button class="view-all">View all 22 →</button>
               </div>
+            </div>
+          </div>
+
+          <!-- Accounts -->
+          <div class="module" id="accountsModule" data-highlight-target="accounts">
+            <div class="mod-head">
+              <div class="mod-head-titles">
+                <div class="mod-title">Accounts</div>
+                <div class="mod-sub" id="accountsSub">40 active · 3 at risk · $1.84M ARR</div>
+              </div>
+              <div class="mod-tools">
+                <button class="select-trigger">By MRR <svg width="10" height="10"><use href="#i-chev-down"/></svg></button>
+              </div>
+            </div>
+            <div class="mod-body" id="accountsBody">
+
+              <div class="acct-row" data-s="risk" data-modal="schedule" data-account="Plaid">
+                <span class="acct-status-dot" data-s="risk"></span>
+                <div class="acct-info">
+                  <div class="acct-name-row">
+                    <span class="acct-name">Plaid</span>
+                    <span class="acct-tag">Series B</span>
+                  </div>
+                  <span class="acct-meta">6 matters · last touch 4d · NPS −14</span>
+                </div>
+                <div class="acct-mrr-block">
+                  <div class="acct-mrr">$123k</div>
+                  <div class="acct-mrr-sub">MRR</div>
+                </div>
+              </div>
+
+              <div class="acct-row" data-s="watch" data-modal="schedule" data-account="Notion">
+                <span class="acct-status-dot" data-s="watch"></span>
+                <div class="acct-info">
+                  <div class="acct-name-row">
+                    <span class="acct-name">Notion</span>
+                    <span class="acct-tag">Series C</span>
+                  </div>
+                  <span class="acct-meta">4 matters · last touch 2d · NPS −8</span>
+                </div>
+                <div class="acct-mrr-block">
+                  <div class="acct-mrr">$84k</div>
+                  <div class="acct-mrr-sub">MRR</div>
+                </div>
+              </div>
+
+              <div class="acct-row" data-s="ok" data-modal="schedule" data-account="Ramp">
+                <span class="acct-status-dot" data-s="ok"></span>
+                <div class="acct-info">
+                  <div class="acct-name-row">
+                    <span class="acct-name">Ramp</span>
+                    <span class="acct-tag">Series C</span>
+                  </div>
+                  <span class="acct-meta">7 matters · last touch 1d · NPS +4</span>
+                </div>
+                <div class="acct-mrr-block">
+                  <div class="acct-mrr">$76k</div>
+                  <div class="acct-mrr-sub">MRR</div>
+                </div>
+              </div>
+
+              <div class="acct-row" data-s="ok" data-modal="schedule" data-account="Vanta">
+                <span class="acct-status-dot" data-s="ok"></span>
+                <div class="acct-info">
+                  <div class="acct-name-row">
+                    <span class="acct-name">Vanta</span>
+                    <span class="acct-tag">Series B</span>
+                  </div>
+                  <span class="acct-meta">3 matters · last touch 1d · NPS +3</span>
+                </div>
+                <div class="acct-mrr-block">
+                  <div class="acct-mrr">$47k</div>
+                  <div class="acct-mrr-sub">MRR</div>
+                </div>
+              </div>
+
+              <div class="acct-row" data-s="ok" data-modal="schedule" data-account="Linear">
+                <span class="acct-status-dot" data-s="ok"></span>
+                <div class="acct-info">
+                  <div class="acct-name-row">
+                    <span class="acct-name">Linear</span>
+                    <span class="acct-tag">Series A</span>
+                  </div>
+                  <span class="acct-meta">5 matters · last touch today · NPS +6</span>
+                </div>
+                <div class="acct-mrr-block">
+                  <div class="acct-mrr">$38k</div>
+                  <div class="acct-mrr-sub">MRR</div>
+                </div>
+              </div>
+
+              <div class="bench-footer">
+                <span class="summary">Top 5 by MRR · $368k of $1.84M total · 35 more accounts</span>
+                <button class="view-all">View all 40 →</button>
+              </div>
+
             </div>
           </div>
 
@@ -5021,7 +5201,7 @@ input, textarea, select { font: inherit; color: inherit; }
     }
   } catch (e) {}
 
-  // Rail collapse
+  // Rail collapse — key bumped to v2 so any stale collapsed preference resets
   const app = document.getElementById('app');
   const rail = document.getElementById('rail');
   const railCollapseBtn = document.getElementById('railCollapseBtn');
@@ -5029,14 +5209,17 @@ input, textarea, select { font: inherit; color: inherit; }
   const setRail = (collapsed) => {
     app.classList.toggle('rail-collapsed', collapsed);
     rail.classList.toggle('expanded', !collapsed);
-    try { localStorage.setItem('moritz.rail', collapsed ? '1' : '0'); } catch (e) {}
   };
   railCollapseBtn.addEventListener('click', () => setRail(true));
   railExpandBtn.addEventListener('click', () => setRail(false));
+  // Clean up any persisted rail state from previous builds — always start expanded
   try {
-    const r = localStorage.getItem('moritz.rail');
-    if (r === '1') setRail(true);
+    localStorage.removeItem('moritz.rail');
+    localStorage.removeItem('moritz.rail.v2');
+    localStorage.removeItem('moritz.rail.v3');
   } catch (e) {}
+  // Force initial expanded state regardless of HTML default
+  setRail(false);
 
   // Drawer (mobile nav)
   (function () {
