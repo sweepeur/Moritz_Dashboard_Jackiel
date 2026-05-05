@@ -257,15 +257,12 @@ input, textarea, select { font: inherit; color: inherit; }
 .app {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: var(--sidebar-w) 1fr var(--rail-w);
+  grid-template-columns: var(--sidebar-w) 1fr;
   grid-template-rows: var(--top-nav-h) 1fr;
   grid-template-areas:
-    "topnav topnav topnav"
-    "sidebar workspace rail";
+    "topnav topnav"
+    "sidebar workspace";
   background: var(--general-background);
-}
-.app.rail-collapsed {
-  grid-template-columns: var(--sidebar-w) 1fr 48px;
 }
 
 /* =====================================================
@@ -513,12 +510,16 @@ input, textarea, select { font: inherit; color: inherit; }
    ===================================================== */
 .workspace {
   grid-area: workspace;
-  padding: var(--space-md) var(--space-md) var(--space-xl);
+  /* right padding reserves space for the fixed-position rail */
+  padding: var(--space-md) calc(var(--space-md) + var(--rail-w)) var(--space-xl) var(--space-md);
   display: flex;
   flex-direction: column;
   gap: var(--section-gap);
   min-width: 0;
   overflow-x: hidden;
+}
+.app.rail-collapsed > .workspace {
+  padding-right: calc(var(--space-md) + 48px) !important;
 }
 .workspace-inner {
   width: 100%;
@@ -553,6 +554,7 @@ input, textarea, select { font: inherit; color: inherit; }
   font-weight: 500;
 }
 .lede-text .accent.watch { color: var(--status-margin-watch-fg); }
+.lede-text .accent.on-track { color: var(--status-on-track-fg); }
 .lede-text .accent[data-highlight] {
   cursor: pointer;
   text-decoration: underline;
@@ -1197,13 +1199,17 @@ input, textarea, select { font: inherit; color: inherit; }
 .kpi-strip.is-compact .kpi-bar-meta {
   display: none;
 }
+/* Allow charts inside KPIs explicitly tagged with .has-chart, even in compact mode */
+.kpi-strip.is-compact .kpi.has-chart .kpi-chart {
+  display: block;
+}
 
 /* =====================================================
    KPI strip — dense layout, charts dominate
    ===================================================== */
 .kpi-strip {
   display: grid;
-  grid-template-columns: 1.55fr 1fr 1fr 1fr 1fr;
+  grid-template-columns: repeat(5, 1fr);
   gap: var(--space-xs);
   align-items: stretch;
 }
@@ -1211,12 +1217,37 @@ input, textarea, select { font: inherit; color: inherit; }
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 12px 14px 10px;
+  padding: 14px 14px 12px;
   display: flex;
   flex-direction: column;
-  min-height: 148px;
+  min-height: 168px;
   transition: border-color 100ms ease;
   overflow: hidden;
+  position: relative;
+}
+.kpi-delta-pill {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  font-family: "Geist", sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 999px;
+  letter-spacing: 0;
+  z-index: 2;
+}
+.kpi-delta-pill.up {
+  background: var(--status-on-track-fg);
+  color: var(--primary-foreground);
+}
+.kpi-delta-pill.down {
+  background: var(--status-sla-risk-fg);
+  color: var(--primary-foreground);
+}
+.kpi-delta-pill.watch {
+  background: var(--status-margin-watch-fg);
+  color: var(--primary-foreground);
 }
 .kpi.hero { padding: 14px 16px 10px; }
 .kpi:hover { border-color: var(--muted-foreground); }
@@ -1247,6 +1278,8 @@ input, textarea, select { font: inherit; color: inherit; }
   margin-top: 4px;
 }
 .kpi-value.down { color: var(--status-sla-risk-fg); }
+.kpi-value.up    { color: var(--status-on-track-fg); }
+.kpi-value.watch { color: var(--status-margin-watch-fg); }
 .kpi-sub {
   font-size: var(--fs-mini);
   color: var(--muted-foreground);
@@ -1274,6 +1307,10 @@ input, textarea, select { font: inherit; color: inherit; }
   margin-top: 8px;
   display: flex;
   align-items: stretch;
+}
+/* Reserve room on the right for the delta pill so it doesn't overlap the chart */
+.kpi.has-chart .kpi-chart {
+  padding-right: 60px;
 }
 .kpi-chart svg { width: 100%; height: 100%; display: block; overflow: visible; }
 
@@ -1597,6 +1634,62 @@ input, textarea, select { font: inherit; color: inherit; }
   outline-offset: -2px;
 }
 .bench-row .avatar { margin-top: 2px; flex-shrink: 0; }
+
+/* Simple bench row variant — name + specialty + util only */
+.bench-row.simple {
+  align-items: center;
+  padding: 10px 10px;
+  border-radius: var(--radius-md);
+}
+.bench-row.simple .avatar { margin-top: 0; }
+.bench-row.simple .bench-id { gap: 2px; }
+.bench-row.simple .bench-id .name {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+}
+.bench-row.simple .bench-id .meta {
+  font-size: var(--fs-mini);
+  color: var(--muted-foreground);
+}
+.bench-row.simple.highlight {
+  background: var(--sla-risk-bg);
+}
+.bench-row.simple.highlight + .bench-row.simple { border-top-color: transparent; }
+.bench-row.simple + .bench-row.simple.highlight { border-top-color: transparent; }
+
+/* Schedule list (right column) */
+.sch-list { display: flex; flex-direction: column; }
+.sch-row {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 6px;
+  font-size: var(--fs-sm);
+  border-radius: var(--radius-sm);
+  transition: background 80ms ease;
+}
+.sch-row + .sch-row { border-top: 1px solid var(--border-1); }
+.sch-row:hover { background: var(--accent-3); }
+.sch-time {
+  font-family: "Geist Mono", monospace;
+  font-size: var(--fs-mini);
+  color: var(--muted-foreground);
+  letter-spacing: 0.04em;
+}
+.sch-content {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sch-actor { font-weight: 500; color: var(--foreground); }
+.sch-target { color: var(--foreground); }
+.sch-detail { color: var(--muted-foreground); }
+.sch-sep { color: var(--muted-foreground); opacity: 0.5; }
 
 .bench-id { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .bench-id .name-row {
@@ -2313,16 +2406,20 @@ input, textarea, select { font: inherit; color: inherit; }
    Right rail
    ===================================================== */
 .rail {
-  grid-area: rail;
+  position: fixed;
+  top: var(--top-nav-h);
+  right: 0;
+  width: var(--rail-w);
+  height: calc(100vh - var(--top-nav-h));
   background: var(--general-background);
   border-left: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  position: sticky;
-  top: var(--top-nav-h);
-  height: calc(100vh - var(--top-nav-h));
-  align-self: start;
+  z-index: 10;
+}
+.app.rail-collapsed .rail {
+  width: 48px;
 }
 .rail-head {
   display: flex;
@@ -2526,13 +2623,13 @@ input, textarea, select { font: inherit; color: inherit; }
    Responsive
    ===================================================== */
 @media (max-width: 1100px) {
-  .app, .app.rail-collapsed {
-    grid-template-columns: var(--sidebar-w) 1fr 48px;
+  .workspace {
+    padding-right: calc(var(--space-md) + 48px);
   }
+  .rail { width: 48px !important; padding: 0; align-items: stretch; }
   /* Force collapsed visual at <1100, regardless of toggle state */
   .rail > *:not(.rail-collapsed-content) { display: none; }
   .rail .rail-collapsed-content { display: flex; }
-  .rail { padding: 0; align-items: stretch; }
 }
 
 @media (max-width: 820px) {
@@ -2543,6 +2640,7 @@ input, textarea, select { font: inherit; color: inherit; }
       "topnav"
       "workspace";
   }
+  .workspace { padding: var(--space-md) var(--space-md) var(--space-xl); }
   .sidebar { display: none; }
   .rail { display: none; }
   .brand { width: auto; flex: 1; text-align: center; font-size: 17px; }
@@ -3371,7 +3469,7 @@ input, textarea, select { font: inherit; color: inherit; }
       <a href="#" class="nav-item active"><svg class="nav-icon"><use href="#i-grid"/></svg><span class="nav-label">Dashboard</span></a>
       <div class="nav-subsection">
         <button class="nav-subitem active" data-view="operations">Operations</button>
-        <button class="nav-subitem" data-view="finance">Finance</button>
+        <button class="nav-subitem" data-view="finance">Finances</button>
       </div>
       <a href="#" class="nav-item"><svg class="nav-icon"><use href="#i-folder"/></svg><span class="nav-label">Matters</span><span class="nav-tail">120</span></a>
       <a href="#" class="nav-item"><svg class="nav-icon"><use href="#i-suitcase"/></svg><span class="nav-label">Accounts</span><span class="nav-tail">40</span></a>
@@ -3405,7 +3503,7 @@ input, textarea, select { font: inherit; color: inherit; }
       <div id="opsAnchor" class="view-anchor">
         <div class="view-anchor-eyebrow">Section 1 / 2</div>
         <h2 class="view-anchor-title">Operations</h2>
-        <p class="view-anchor-sub">Morning triage — matters, lawyers, margin.</p>
+        <p class="view-anchor-sub">Matters, lawyers, accounts</p>
       </div>
 
       <!-- Page lede -->
@@ -3417,117 +3515,83 @@ input, textarea, select { font: inherit; color: inherit; }
           <span>09:48</span>
         </div>
         <h1 class="h-lede lede-text">
-          <span class="accent" data-highlight="qa">Five matters</span> need attention.
-          <span class="accent" data-highlight="bench">Two lawyers</span> over capacity.
-          Margin running <span class="accent watch" data-highlight="revenue">1.2% behind</span> estimate.
+          <span class="accent" data-highlight="qa">Four matters</span> need attention.
+          <span class="accent watch" data-highlight="bench">Two lawyers</span> over capacity.
+          Earnings this month of <span class="accent on-track" data-highlight="revenue">$6,820</span>. This is <span class="accent on-track">+18%</span> from last month.
         </h1>
       </section>
 
       <!-- KPI strip -->
-      <section class="kpi-strip is-compact" id="opsKpiStrip">
-        <button class="kpi-shrink-btn" data-shrink-target="opsKpiStrip" title="Toggle KPI detail">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polyline points="18 15 12 9 6 15"/>
-          </svg>
-          <span class="label">Compact</span>
-        </button>
-        <!-- Hero: On-time delivery -->
-        <div class="kpi hero">
-          <div class="kpi-eyebrow">On-time delivery, 7 days</div>
-          <div class="kpi-value">96%</div>
-          <div class="kpi-sub">delivered within committed turnaround</div>
+      <section class="kpi-strip" id="opsKpiStrip">
+
+        <!-- 1 · On time, 7d -->
+        <div class="kpi has-chart">
+          <div class="kpi-eyebrow">On time, 7d</div>
+          <div class="kpi-value up">96%</div>
+          <div class="kpi-sub">matters delivered on time</div>
           <div class="kpi-chart">
-            <svg viewBox="0 0 600 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M0 78 L40 76 L80 70 L120 66 L160 64 L200 58 L240 55 L280 52 L320 46 L360 42 L400 38 L440 33 L480 28 L520 24 L560 18 L598 14"
-                    fill="none" stroke="var(--chart-blue, #5a6f80)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
-              <line x1="595" y1="10" x2="595" y2="22" stroke="var(--foreground)" stroke-width="2" stroke-linecap="round"/>
+            <svg viewBox="0 0 200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-label="On-time delivery, 7-day step chart">
+              <defs>
+                <linearGradient id="kpiOnTimeFill" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%"  stop-color="#9ec1de" stop-opacity="0.55"/>
+                  <stop offset="100%" stop-color="#9ec1de" stop-opacity="0.10"/>
+                </linearGradient>
+              </defs>
+              <!-- Baseline -->
+              <line x1="0" y1="59.5" x2="200" y2="59.5" stroke="#9ec1de" stroke-width="0.5" opacity="0.4"/>
+              <!-- Step area: 7 day buckets -->
+              <path d="M0 32 L0 22 L29 22 L29 14 L57 14 L57 26 L86 26 L86 18 L114 18 L114 28 L143 28 L143 22 L171 22 L171 16 L200 16 L200 60 L0 60 Z"
+                    fill="url(#kpiOnTimeFill)"/>
+              <path d="M0 22 L29 22 L29 14 L57 14 L57 26 L86 26 L86 18 L114 18 L114 28 L143 28 L143 22 L171 22 L171 16 L200 16"
+                    fill="none" stroke="#5a8db8" stroke-width="1.2" stroke-linejoin="miter" stroke-linecap="butt" opacity="0.85"/>
             </svg>
           </div>
+          <span class="kpi-delta-pill up">+18%</span>
         </div>
 
-        <!-- Untouched -->
-        <div class="kpi">
-          <div class="kpi-eyebrow">Untouched matters</div>
-          <div class="kpi-value">4</div>
-          <div class="kpi-sub">no activity in &gt; 4 hours</div>
-          <div class="kpi-chart">
-            <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
-              <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">12</text>
-              <text x="0" y="50" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">6</text>
-              <text x="0" y="86" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">0</text>
-              <line x1="22" y1="10" x2="200" y2="10" stroke="var(--border)" stroke-dasharray="2 3"/>
-              <line x1="22" y1="46" x2="200" y2="46" stroke="var(--border)" stroke-dasharray="2 3"/>
-              <line x1="22" y1="82" x2="200" y2="82" stroke="var(--border)"/>
-              <path d="M26 35 L48 28 L70 42 L92 30 L114 50 L136 32 L158 46 L180 38 L196 50"
-                    fill="none" stroke="var(--chart-blue, #5a6f80)" stroke-width="1.5" stroke-linejoin="round"/>
-              <line x1="194" y1="44" x2="198" y2="56" stroke="var(--foreground)" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </div>
-        </div>
-
-        <!-- Over capacity -->
+        <!-- 2 · Over capacity -->
         <div class="kpi">
           <div class="kpi-eyebrow">Over capacity</div>
-          <div class="kpi-value">2</div>
-          <div class="kpi-sub">lawyers above 100% utilization</div>
-          <div class="kpi-chart">
-            <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
-              <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">6</text>
-              <text x="2" y="50" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">3</text>
-              <text x="2" y="86" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">0</text>
-              <line x1="22" y1="10" x2="200" y2="10" stroke="var(--border)" stroke-dasharray="2 3"/>
-              <line x1="22" y1="46" x2="200" y2="46" stroke="var(--border)" stroke-dasharray="2 3"/>
-              <line x1="22" y1="82" x2="200" y2="82" stroke="var(--border)"/>
-              <path d="M26 70 L48 65 L70 58 L92 52 L114 48 L136 38 L158 32 L180 26 L196 22"
-                    fill="none" stroke="var(--chart-blue, #5a6f80)" stroke-width="1.5" stroke-linejoin="round"/>
-              <line x1="194" y1="16" x2="198" y2="28" stroke="var(--foreground)" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </div>
+          <div class="kpi-value watch">2</div>
+          <div class="kpi-sub">lawyers</div>
+          <span class="kpi-delta-pill up">+18%</span>
         </div>
 
-        <!-- Fee margin -->
+        <!-- 3 · Customer satisfaction -->
         <div class="kpi">
-          <div class="kpi-eyebrow">Fee margin, wk</div>
-          <div class="kpi-value down">−1.2%</div>
-          <div class="kpi-sub">vs flat-fee estimate</div>
-          <div class="kpi-chart">
-            <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
-              <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">+3</text>
-              <text x="2" y="50" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">0</text>
-              <text x="0" y="86" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">−5</text>
-              <line x1="22" y1="10" x2="200" y2="10" stroke="var(--border)" stroke-dasharray="2 3"/>
-              <line x1="22" y1="46" x2="200" y2="46" stroke="var(--muted-foreground)" stroke-width="0.7" opacity="0.4"/>
-              <line x1="22" y1="82" x2="200" y2="82" stroke="var(--border)" stroke-dasharray="2 3"/>
-              <path d="M26 36 L48 40 L70 32 L92 46 L114 48 L136 56 L158 64 L180 70 L196 74"
-                    fill="none" stroke="var(--status-sla-risk-fg)" stroke-width="1.5" stroke-linejoin="round"/>
-              <line x1="194" y1="68" x2="198" y2="80" stroke="var(--foreground)" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </div>
+          <div class="kpi-eyebrow">Customer satisfaction</div>
+          <div class="kpi-value watch">8,6</div>
+          <div class="kpi-sub">average rating</div>
+          <span class="kpi-delta-pill up">+18%</span>
         </div>
 
-        <!-- Revenue -->
+        <!-- 4 · Same day delivery -->
         <div class="kpi">
-          <div class="kpi-eyebrow">AI lift · wk</div>
-          <div class="kpi-value">84h</div>
-          <div class="kpi-sub">lawyer hours saved by AI redline + drafting</div>
+          <div class="kpi-eyebrow">Same day delivery</div>
+          <div class="kpi-value up">92%</div>
+          <div class="kpi-sub">of matters MTD</div>
+          <span class="kpi-delta-pill watch">−1%</span>
+        </div>
+
+        <!-- 5 · Monthly earnings -->
+        <div class="kpi has-chart">
+          <div class="kpi-eyebrow">Monthly earnings</div>
+          <div class="kpi-value up">$6,820</div>
+          <div class="kpi-sub">MTD</div>
           <div class="kpi-chart">
-            <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
-              <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">120h</text>
-              <text x="2" y="50" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">60h</text>
-              <text x="2" y="86" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">0</text>
-              <line x1="26" y1="10" x2="200" y2="10" stroke="var(--border)" stroke-dasharray="2 3"/>
-              <line x1="26" y1="46" x2="200" y2="46" stroke="var(--border)" stroke-dasharray="2 3"/>
-              <line x1="26" y1="82" x2="200" y2="82" stroke="var(--border)"/>
-              <rect x="30" y="56" width="14" height="26" fill="var(--sku-1)" opacity="0.55"/>
-              <rect x="50" y="50" width="14" height="32" fill="var(--sku-1)" opacity="0.6"/>
-              <rect x="70" y="44" width="14" height="38" fill="var(--sku-1)" opacity="0.7"/>
-              <rect x="90" y="40" width="14" height="42" fill="var(--sku-1)" opacity="0.75"/>
-              <rect x="110" y="36" width="14" height="46" fill="var(--sku-1)" opacity="0.85"/>
-              <rect x="130" y="32" width="14" height="50" fill="var(--sku-1)" opacity="0.9"/>
-              <rect x="150" y="28" width="14" height="54" fill="var(--sku-1)"/>
-              <rect x="170" y="24" width="14" height="58" fill="var(--foreground)"/>
+            <svg viewBox="0 0 160 60" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg" aria-label="Monthly earnings, weekly bars">
+              <g fill="#5a8db8" opacity="0.85">
+                <rect x="6"   y="28" width="14" height="32" rx="2"/>
+                <rect x="28"  y="14" width="14" height="46" rx="2"/>
+                <rect x="50"  y="36" width="14" height="24" rx="2"/>
+                <rect x="72"  y="22" width="14" height="38" rx="2"/>
+                <rect x="94"  y="8"  width="14" height="52" rx="2"/>
+                <rect x="116" y="30" width="14" height="30" rx="2"/>
+                <rect x="138" y="18" width="14" height="42" rx="2"/>
+              </g>
             </svg>
           </div>
+          <span class="kpi-delta-pill up">+4%</span>
         </div>
       </section>
 
@@ -3541,8 +3605,8 @@ input, textarea, select { font: inherit; color: inherit; }
           <div class="module" id="qaModule" data-highlight-target="qa">
             <div class="mod-head">
               <div class="mod-head-titles">
-                <div class="mod-title" id="qaTitle">Quick actions · Today</div>
-                <div class="mod-sub" id="qaSub">5 items needing intervention</div>
+                <div class="mod-title" id="qaTitle">Quick actions - Today</div>
+                <div class="mod-sub" id="qaSub">4 items needing intervention</div>
               </div>
               <div class="mod-tools">
                 <button class="select-trigger">Severity <svg width="10" height="10"><use href="#i-chev-down"/></svg></button>
@@ -3550,52 +3614,46 @@ input, textarea, select { font: inherit; color: inherit; }
             </div>
             <div class="mod-body">
               <div class="qa-list" id="qaList">
-                <div class="qa-row" data-context="Petra Lund pinged the Director directly, bypassing assigned lawyer Marcus Chen. Plaid is a $123k MRR account; this is the second escalation this month.">
+                <div class="qa-row" data-context="Marcus Chen at 112% utilization. Two SaaS matters due Friday. Rebalance to bring under capacity.">
                   <span class="sev-dot sev-alarm"></span>
                   <span class="qa-content">
-                    <span class="qa-issue">Customer escalation</span>
+                    <span class="qa-issue">Bench Overload</span>
                     <span class="qa-sep">·</span>
-                    <span class="qa-target mono">A-0017 · Plaid</span>
+                    <span class="qa-target">Marcus Chen</span>
                   </span>
                   <button class="qa-dismiss" aria-label="Dismiss"><svg width="12" height="12"><use href="#i-x"/></svg></button>
-                  <button class="verb" data-modal="reply">Reply</button>
+                  <button class="verb" data-modal="rebalance"
+                          data-lawyer-name="Marcus Chen" data-lawyer-id="L-014"
+                          data-lawyer-util="112%" data-lawyer-target="94%"
+                          data-lawyer-receiver="Priya Raman" data-lawyer-receiver-util="68%"
+                          data-lawyer-receiver-target="86%">Balance</button>
                 </div>
-                <div class="qa-row" data-context="Scoped at 5h. Actual logged 5.9h, projected to 6.2h. The 18% overrun crosses the 15% margin-watch threshold; flat-fee margin is at risk.">
+                <div class="qa-row" data-context="Scoped at 5h. Actual logged 5.9h, projected to 6.2h. 18% overrun crosses margin-watch threshold.">
                   <span class="sev-dot sev-watch"></span>
                   <span class="qa-content">
-                    <span class="qa-issue">Margin slip</span>
+                    <span class="qa-issue">Margin Slip</span>
                     <span class="qa-sep">·</span>
-                    <span class="qa-target mono">M-0188 · Ramp</span>
+                    <span class="qa-target">Datadogs</span>
                   </span>
                   <button class="qa-dismiss" aria-label="Dismiss"><svg width="12" height="12"><use href="#i-x"/></svg></button>
-                  <button class="verb" data-toast="M-0188 added to billing review queue.">Flag</button>
+                  <button class="verb" data-toast="Datadogs added to billing review queue.">Flag</button>
                 </div>
-                <div class="qa-row" data-context="Due in 3h. 18% of the SLA window remains. Currently in attorney review with Priya Raman, who is at 108% utilization.">
+                <div class="qa-row" data-context="Notion DPA §7.2 (indemnity) deviates from the firm playbook — confidence 0.71. §11 (termination) flagged at 0.82.">
                   <span class="sev-dot sev-watch"></span>
                   <span class="qa-content">
-                    <span class="qa-issue">SLA watch</span>
+                    <span class="qa-issue">AI Risk Flag</span>
                     <span class="qa-sep">·</span>
-                    <span class="qa-target mono">M-0203 · Notion</span>
-                  </span>
-                  <button class="qa-dismiss" aria-label="Dismiss"><svg width="12" height="12"><use href="#i-x"/></svg></button>
-                  <button class="verb" data-toast="Slack ping sent to assigned lawyer.">Push</button>
-                </div>
-                <div class="qa-row" data-context="Vanta DPA §7.2 (indemnity) deviates from the firm playbook — confidence 0.71. §11 (termination) also flagged at 0.82. Two items to revise or dismiss.">
-                  <span class="sev-dot sev-watch"></span>
-                  <span class="qa-content">
-                    <span class="qa-issue">AI risk flag</span>
-                    <span class="qa-sep">·</span>
-                    <span class="qa-target mono">M-0219 · Vanta</span>
+                    <span class="qa-target">Notion</span>
                   </span>
                   <button class="qa-dismiss" aria-label="Dismiss"><svg width="12" height="12"><use href="#i-x"/></svg></button>
                   <button class="verb" data-modal="review">Review</button>
                 </div>
-                <div class="qa-row" data-context="In review for 41 hours. Assigned lawyer is Marcus Chen. Nudge clears most stale-review cases within an hour.">
+                <div class="qa-row" data-context="Petra Lund pinged the Director directly, bypassing assigned lawyer. Vanta is a $47k MRR account.">
                   <span class="sev-dot sev-info"></span>
                   <span class="qa-content">
-                    <span class="qa-issue">Stale review</span>
+                    <span class="qa-issue">Customer Escalation</span>
                     <span class="qa-sep">·</span>
-                    <span class="qa-target mono">M-0177 · Modal</span>
+                    <span class="qa-target">Vanta</span>
                   </span>
                   <button class="qa-dismiss" aria-label="Dismiss"><svg width="12" height="12"><use href="#i-x"/></svg></button>
                   <button class="verb" data-toast="Reminder slack sent to assigned lawyer.">Nudge</button>
@@ -3711,6 +3769,86 @@ input, textarea, select { font: inherit; color: inherit; }
             </div>
           </div>
 
+
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="ws-col">
+
+          <!-- Upcoming Schedule -->
+          <div class="module" id="scheduleModule">
+            <div class="mod-head">
+              <div class="mod-head-titles">
+                <div class="mod-title">Upcoming Schedule</div>
+                <div class="mod-sub">4 alerts in the last 24h</div>
+              </div>
+            </div>
+            <div class="mod-body">
+              <div class="sch-list">
+                <div class="sch-row">
+                  <span class="sch-time">10:30</span>
+                  <div class="sch-content">
+                    <span class="sch-actor">Check-in</span>
+                    <span class="sch-sep">·</span>
+                    <span class="sch-target">Vanta</span>
+                    <span class="sch-sep">·</span>
+                    <span class="sch-detail">Petra Lund</span>
+                  </div>
+                  <button class="verb ghost" data-toast="Joining Vanta check-in.">Join</button>
+                </div>
+                <div class="sch-row">
+                  <span class="sch-time">11:15</span>
+                  <div class="sch-content">
+                    <span class="sch-actor">Onboarding</span>
+                    <span class="sch-sep">·</span>
+                    <span class="sch-target">Notion</span>
+                  </div>
+                  <button class="verb" data-toast="Notion onboarding opened.">Open</button>
+                </div>
+                <div class="sch-row">
+                  <span class="sch-time">13:00</span>
+                  <div class="sch-content">
+                    <span class="sch-actor">Bench review</span>
+                    <span class="sch-sep">·</span>
+                    <span class="sch-target">Internal</span>
+                    <span class="sch-sep">·</span>
+                    <span class="sch-detail">Pamir + Director</span>
+                  </div>
+                  <button class="verb" data-toast="Bench review opened.">Open</button>
+                </div>
+                <div class="sch-row">
+                  <span class="sch-time">15:30</span>
+                  <div class="sch-content">
+                    <span class="sch-actor">SAFE redline</span>
+                    <span class="sch-sep">·</span>
+                    <span class="sch-target">Plaid</span>
+                    <span class="sch-sep">·</span>
+                    <span class="sch-detail">delivery committed</span>
+                  </div>
+                  <button class="verb" data-toast="Plaid SAFE redline opened.">Open</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Customer feedback (Voice) -->
+          <div class="module voice">
+            <div class="mod-head">
+              <div class="mod-head-titles">
+                <div class="mod-title">Customer feedback</div>
+              </div>
+              <div class="nps">NPS - 9</div>
+            </div>
+            <div class="mod-body">
+              <div class="voice-quote">"Their meticulous approach to contract law ensured we were secure and well-represented in all our business dealings."</div>
+              <div class="voice-attrib">
+                <span class="name">Happy Customer</span>
+                <span>·</span>
+                <span class="ctx">Corgi</span>
+              </div>
+            </div>
+          </div>
+
           <!-- Accounts -->
           <div class="module" id="accountsModule" data-highlight-target="accounts">
             <div class="mod-head">
@@ -3808,213 +3946,6 @@ input, textarea, select { font: inherit; color: inherit; }
           </div>
 
         </div>
-
-        <!-- RIGHT COLUMN -->
-        <div class="ws-col">
-
-          <!-- Voice -->
-          <div class="module voice">
-            <div class="mod-head">
-              <div class="mod-head-titles">
-                <div class="mod-title">Voice</div>
-              </div>
-              <div class="nps">NPS 68</div>
-            </div>
-            <div class="mod-body">
-              <div class="voice-quote">"Same-day on the SAFE redline saved our round timeline. Worth every dollar."</div>
-              <div class="voice-attrib">
-                <span class="name">Eva Lindqvist</span>
-                <span>·</span>
-                <span class="ctx">CEO, Plaid · Series B SAFE · 4d ago</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Monthly earnings -->
-          <div class="module fig-card" id="opsMonthlyEarnings" data-highlight-target="revenue">
-            <div class="mod-head">
-              <div class="mod-head-titles">
-                <div class="mod-title">Monthly earnings</div>
-              </div>
-              <span class="fig-icon" aria-hidden="true">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M14.5 9.5h-3a2 2 0 1 0 0 4h1a2 2 0 1 1 0 4h-3M12 7v10"/></svg>
-              </span>
-            </div>
-            <div class="mod-body">
-              <div class="fig-stat">$284k</div>
-              <div class="fig-delta-row">
-                <span class="fig-delta-pill up">+12%</span>
-                <span class="fig-delta-text">than last year</span>
-              </div>
-              <div class="fig-wave">
-                <svg viewBox="0 0 520 130" preserveAspectRatio="none" aria-label="Monthly earnings line">
-                  <defs>
-                    <linearGradient id="figWaveFill" x1="0" x2="0" y1="0" y2="1">
-                      <stop offset="0%" stop-color="var(--sku-1)" stop-opacity="0.22"/>
-                      <stop offset="100%" stop-color="var(--sku-1)" stop-opacity="0"/>
-                    </linearGradient>
-                  </defs>
-                  <path d="M0 86 C45 86, 70 30, 130 30 S215 86, 260 86 S345 36, 390 36 S475 86, 520 86 L520 130 L0 130 Z"
-                        fill="url(#figWaveFill)"/>
-                  <path d="M0 86 C45 86, 70 30, 130 30 S215 86, 260 86 S345 36, 390 36 S475 86, 520 86"
-                        fill="none" stroke="var(--foreground)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-                </svg>
-              </div>
-            </div>
-          </div>
-
-          <!-- Payments -->
-          <div class="module fig-card" id="opsPayments">
-            <div class="mod-head">
-              <div class="mod-head-titles">
-                <div class="mod-title">Payments</div>
-                <div class="mod-sub">Last 30 days · 258 received</div>
-              </div>
-              <div class="fig-head-stat">
-                <span class="fig-delta-pill up">+18%</span>
-              </div>
-            </div>
-            <div class="mod-body">
-              <div class="fig-pie-block">
-                <svg class="fig-pie-svg" viewBox="-60 -60 120 120" role="img"
-                     aria-label="Invoice 52 percent, Bank card 31 percent, PayPal 17 percent">
-                  <g stroke="var(--card)" stroke-width="2" stroke-linejoin="round">
-                    <!-- Invoice 52% -->
-                    <path d="M 0 0 L 0 -50 A 50 50 0 1 1 -6.27 49.61 Z" fill="var(--sku-1)"/>
-                    <!-- Bank card 31% -->
-                    <path d="M 0 0 L -6.27 49.61 A 50 50 0 0 1 -43.8 -24.18 Z" fill="var(--sku-5)"/>
-                    <!-- PayPal 17% -->
-                    <path d="M 0 0 L -43.8 -24.18 A 50 50 0 0 1 0 -50 Z" fill="var(--sku-3)"/>
-                  </g>
-                  <g font-family="Geist, system-ui, sans-serif" font-weight="500" font-size="13"
-                     fill="#ffffff" text-anchor="middle" dominant-baseline="middle">
-                    <text x="30" y="2">52%</text>
-                    <text x="-27" y="14">31%</text>
-                    <text x="-15" y="-26">17%</text>
-                  </g>
-                </svg>
-                <div class="fig-pie-legend">
-                  <div class="fig-pie-item" style="--swatch: var(--sku-1);">
-                    <span class="fig-pie-dot"></span>
-                    <span class="fig-pie-label">Invoice</span>
-                    <span class="fig-pie-pct">52%</span>
-                  </div>
-                  <div class="fig-pie-item" style="--swatch: var(--sku-5);">
-                    <span class="fig-pie-dot"></span>
-                    <span class="fig-pie-label">Bank card</span>
-                    <span class="fig-pie-pct">31%</span>
-                  </div>
-                  <div class="fig-pie-item" style="--swatch: var(--sku-3);">
-                    <span class="fig-pie-dot"></span>
-                    <span class="fig-pie-label">PayPal</span>
-                    <span class="fig-pie-pct">17%</span>
-                  </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      <!-- Pulse — firm activity stream + schedule -->
-      <section class="module" id="pulseModule">
-        <div class="mod-head">
-          <div class="mod-head-titles">
-            <div class="mod-title">Today</div>
-            <div class="mod-sub" id="pulseSub">Activity past, schedule ahead</div>
-          </div>
-        </div>
-        <div class="mod-body">
-          <div class="pulse-list">
-
-            <div class="pulse-row" data-pulse="call" data-upcoming="call">
-              <span class="pulse-time">10:30</span>
-              <span class="pulse-icon"><svg><use href="#i-phone"/></svg></span>
-              <div class="pulse-content">
-                <div class="pulse-line"><span class="pulse-actor">Plaid check-in</span> — Petra Lund · 30 min</div>
-                <div class="pulse-meta">A-0017 · post-escalation follow-up · in 40m · Pamir + Director</div>
-              </div>
-              <div class="pulse-action"><button class="verb" data-toast="Joining Plaid check-in.">Join</button></div>
-            </div>
-
-            <div class="pulse-row" data-pulse="deadline" data-upcoming="deadline">
-              <span class="pulse-time">11:00</span>
-              <span class="pulse-icon"><svg><use href="#i-clock"/></svg></span>
-              <div class="pulse-content">
-                <div class="pulse-line"><span class="pulse-actor">Notion DPA</span> delivery committed — <span class="pulse-target">M-0203</span></div>
-                <div class="pulse-meta">Priya Raman · scoped 4h · 3.2h logged · in 70m · on track</div>
-              </div>
-              <div class="pulse-action"><span class="pulse-status">In review</span></div>
-            </div>
-
-            <div class="pulse-row" data-pulse="meeting" data-upcoming="meeting">
-              <span class="pulse-time">13:00</span>
-              <span class="pulse-icon"><svg><use href="#i-users"/></svg></span>
-              <div class="pulse-content">
-                <div class="pulse-line"><span class="pulse-actor">Bench review</span> — Pamir + Director · 30 min</div>
-                <div class="pulse-meta">Weekly sync · L-014 + L-008 rebalance on agenda · in 3h 10m</div>
-              </div>
-              <div class="pulse-action"><button class="verb" data-toast="Bench review opened in calendar.">Open</button></div>
-            </div>
-
-            <div class="pulse-row" data-pulse="deadline" data-upcoming="deadline">
-              <span class="pulse-time">14:30</span>
-              <span class="pulse-icon"><svg><use href="#i-clock"/></svg></span>
-              <div class="pulse-content">
-                <div class="pulse-line"><span class="pulse-actor">Vanta DPA</span> delivery committed — <span class="pulse-target">M-0219</span></div>
-                <div class="pulse-meta">Priya Raman · awaiting AI flag review · in 4h 40m · at risk</div>
-              </div>
-              <div class="pulse-action"><span class="pulse-status">At risk</span></div>
-            </div>
-
-            <div class="pulse-row" data-pulse="call" data-upcoming="call">
-              <span class="pulse-time">16:00</span>
-              <span class="pulse-icon"><svg><use href="#i-phone"/></svg></span>
-              <div class="pulse-content">
-                <div class="pulse-line"><span class="pulse-actor">Replicate scoping</span> — new account intake · 30 min</div>
-                <div class="pulse-meta">Inbound from yesterday · Jonas Kallio lead · in 6h 10m</div>
-              </div>
-              <div class="pulse-action"><button class="verb" data-toast="Replicate scoping joined.">Join</button></div>
-            </div>
-
-            <div class="pulse-now">
-              <span class="pulse-now-marker"><span class="pulse-now-dot"></span>Earlier today · 09:50</span>
-            </div>
-
-            <div class="pulse-row" data-pulse="delivered">
-              <span class="pulse-time">07:32</span>
-              <span class="pulse-icon"><svg><use href="#i-check"/></svg></span>
-              <div class="pulse-content">
-                <div class="pulse-line"><span class="pulse-actor">Priya Raman</span> delivered <span class="pulse-target">M-0224</span> — Notion Series A docs</div>
-                <div class="pulse-meta">8h scoped · 7.5h actual · on time · invoice queued</div>
-              </div>
-              <div class="pulse-action"><span class="pulse-status success">Delivered</span></div>
-            </div>
-
-            <div class="pulse-row" data-pulse="signed">
-              <span class="pulse-time">07:10</span>
-              <span class="pulse-icon"><svg><use href="#i-pen"/></svg></span>
-              <div class="pulse-content">
-                <div class="pulse-line"><span class="pulse-actor">Plaid</span> countersigned SAFE redline — <span class="pulse-target">M-0207</span></div>
-                <div class="pulse-meta">v3 final · $4.2k flat fee · 36h end-to-end</div>
-              </div>
-              <div class="pulse-action"><span class="pulse-status success">Signed</span></div>
-            </div>
-
-            <div class="pulse-row" data-pulse="onboarded">
-              <span class="pulse-time">06:48</span>
-              <span class="pulse-icon"><svg><use href="#i-user-plus"/></svg></span>
-              <div class="pulse-content">
-                <div class="pulse-line"><span class="pulse-actor">Modal Inc</span> onboarded — Ella Hoffmann lead, three matters scoped</div>
-                <div class="pulse-meta">A-0041 · $84k MRR projected · Series A · IP focus</div>
-              </div>
-              <div class="pulse-action"><span class="pulse-status info">New</span></div>
-            </div>
-
-          </div>
-        </div>
       </section>
 
       </div><!-- /view-operations -->
@@ -4024,7 +3955,7 @@ input, textarea, select { font: inherit; color: inherit; }
 
         <div id="finAnchor" class="view-anchor">
           <div class="view-anchor-eyebrow">Section 2 / 2</div>
-          <h2 class="view-anchor-title">Finance</h2>
+          <h2 class="view-anchor-title">Finances</h2>
           <p class="view-anchor-sub">Sales-style breakdown — revenue by SKU, top accounts, pipeline.</p>
         </div>
 
@@ -4042,13 +3973,7 @@ input, textarea, select { font: inherit; color: inherit; }
         </section>
 
         <!-- KPI strip (4-up for finance) -->
-        <section class="kpi-strip is-compact" id="finKpiStrip">
-          <button class="kpi-shrink-btn" data-shrink-target="finKpiStrip" title="Toggle KPI detail">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <polyline points="18 15 12 9 6 15"/>
-            </svg>
-            <span class="label">Compact</span>
-          </button>
+        <section class="kpi-strip" id="finKpiStrip">
           <!-- Hero: Net revenue with target progress -->
           <div class="kpi hero">
             <div class="kpi-eyebrow">Net revenue · MTD</div>
@@ -4795,7 +4720,7 @@ input, textarea, select { font: inherit; color: inherit; }
       <a href="#" class="nav-item active"><svg class="nav-icon"><use href="#i-grid"/></svg><span class="nav-label">Dashboard</span></a>
       <div class="nav-subsection">
         <button class="nav-subitem active" data-view="operations">Operations</button>
-        <button class="nav-subitem" data-view="finance">Finance</button>
+        <button class="nav-subitem" data-view="finance">Finances</button>
       </div>
       <a href="#" class="nav-item"><svg class="nav-icon"><use href="#i-folder"/></svg><span class="nav-label">Matters</span><span class="nav-tail">120</span></a>
       <a href="#" class="nav-item"><svg class="nav-icon"><use href="#i-suitcase"/></svg><span class="nav-label">Accounts</span><span class="nav-tail">40</span></a>
@@ -6071,93 +5996,69 @@ input, textarea, select { font: inherit; color: inherit; }
     const calm = {
       ledeMeta: '<svg width="12" height="12"><use href="#i-calendar"/></svg> <span>Friday, May 7</span> <span class="dot"></span> <span>14:22</span>',
 
-      ledeText: '<span class="accent" data-highlight="qa" style="color: var(--status-on-track-fg);">Two stale</span> reviews to nudge. <span class="accent" data-highlight="bench" style="color: var(--status-on-track-fg);">All lawyers</span> in healthy range. Margin running <span class="accent" data-highlight="revenue" style="color: var(--status-on-track-fg);">3.1% ahead</span> of estimate.',
+      ledeText: '<span class="accent on-track" data-highlight="qa">Two stale</span> reviews to nudge. <span class="accent on-track" data-highlight="bench">All lawyers</span> in healthy range. Earnings this month of <span class="accent on-track" data-highlight="revenue">$7,420</span>. This is <span class="accent on-track">+24%</span> from last month.',
 
       kpiStrip: `
-        <div class="kpi hero">
-          <div class="kpi-eyebrow">On-time delivery, 7 days</div>
-          <div class="kpi-value">98%</div>
-          <div class="kpi-sub">of 245 matters delivered within their committed turnaround. <span class="arrow">▲ 4.2</span> vs prior week. Best week of the quarter.</div>
-          <div class="kpi-chart">
-            <svg viewBox="0 0 600 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M0 78 L40 70 L80 60 L120 52 L160 44 L200 36 L240 28 L280 22 L320 18 L360 14 L400 12 L440 10 L480 8 L520 6 L560 6 L598 4" fill="none" stroke="var(--chart-blue, #5a6f80)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
-              <line x1="595" y1="0" x2="595" y2="14" stroke="var(--foreground)" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </div>
-        </div>
         <div class="kpi">
-          <div class="kpi-eyebrow">Untouched</div>
-          <div class="kpi-value">0</div>
-          <div class="kpi-sub">all matters claimed</div>
+          <div class="kpi-eyebrow">On time, 7d</div>
+          <div class="kpi-value up">98%</div>
+          <div class="kpi-sub">matters delivered on time</div>
           <div class="kpi-chart">
-            <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
-              <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">12</text>
-              <text x="0" y="50" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">6</text>
-              <text x="0" y="86" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">0</text>
-              <line x1="22" y1="10" x2="200" y2="10" stroke="var(--border)" stroke-dasharray="2 3"/>
-              <line x1="22" y1="46" x2="200" y2="46" stroke="var(--border)" stroke-dasharray="2 3"/>
-              <line x1="22" y1="82" x2="200" y2="82" stroke="var(--border)"/>
-              <path d="M26 50 L48 60 L70 65 L92 70 L114 75 L136 78 L158 80 L180 82 L196 82" fill="none" stroke="var(--chart-blue, #5a6f80)" stroke-width="1.5" stroke-linejoin="round"/>
-              <line x1="194" y1="76" x2="198" y2="88" stroke="var(--foreground)" stroke-width="2" stroke-linecap="round"/>
+            <svg viewBox="0 0 200 50" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-label="On-time delivery sparkline">
+              <path d="M0 30 L10 26 L20 28 L30 20 L40 24 L50 16 L60 18 L70 12 L80 14 L90 8 L100 12 L110 6 L120 10 L130 4 L140 8 L150 4 L160 6 L170 4 L180 6 L190 4 L200 4" fill="none" stroke="var(--chart-blue, #5a6f80)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" opacity="0.7"/>
             </svg>
           </div>
+          <span class="kpi-delta-pill up">+24%</span>
         </div>
         <div class="kpi">
           <div class="kpi-eyebrow">Over capacity</div>
-          <div class="kpi-value">0</div>
-          <div class="kpi-sub">of 22 lawyers</div>
-          <div class="kpi-chart">
-            <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
-              <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">6</text>
-              <text x="2" y="50" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">3</text>
-              <text x="2" y="86" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">0</text>
-              <line x1="22" y1="10" x2="200" y2="10" stroke="var(--border)" stroke-dasharray="2 3"/>
-              <line x1="22" y1="46" x2="200" y2="46" stroke="var(--border)" stroke-dasharray="2 3"/>
-              <line x1="22" y1="82" x2="200" y2="82" stroke="var(--border)"/>
-              <path d="M26 32 L48 38 L70 45 L92 55 L114 60 L136 65 L158 72 L180 78 L196 82" fill="none" stroke="var(--chart-blue, #5a6f80)" stroke-width="1.5" stroke-linejoin="round"/>
-              <line x1="194" y1="76" x2="198" y2="88" stroke="var(--foreground)" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </div>
+          <div class="kpi-value up">0</div>
+          <div class="kpi-sub">lawyers</div>
+          <span class="kpi-delta-pill up">+24%</span>
         </div>
         <div class="kpi">
-          <div class="kpi-eyebrow">Fee margin · wk</div>
-          <div class="kpi-value" style="color: var(--status-on-track-fg);">+3.1%</div>
-          <div class="kpi-sub">ahead of estimate</div>
-          <div class="kpi-chart">
-            <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
-              <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">+5</text>
-              <text x="2" y="50" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">0</text>
-              <text x="0" y="86" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">−5</text>
-              <line x1="22" y1="10" x2="200" y2="10" stroke="var(--border)" stroke-dasharray="2 3"/>
-              <line x1="22" y1="46" x2="200" y2="46" stroke="var(--muted-foreground)" stroke-width="0.7" opacity="0.4"/>
-              <line x1="22" y1="82" x2="200" y2="82" stroke="var(--border)" stroke-dasharray="2 3"/>
-              <path d="M26 50 L48 48 L70 42 L92 38 L114 34 L136 30 L158 28 L180 26 L196 22" fill="none" stroke="var(--status-on-track-fg)" stroke-width="1.5" stroke-linejoin="round"/>
-              <line x1="194" y1="16" x2="198" y2="28" stroke="var(--foreground)" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </div>
+          <div class="kpi-eyebrow">Customer satisfaction</div>
+          <div class="kpi-value up">9,2</div>
+          <div class="kpi-sub">average rating</div>
+          <span class="kpi-delta-pill up">+24%</span>
         </div>
         <div class="kpi">
-          <div class="kpi-eyebrow">AI lift · wk</div>
-          <div class="kpi-value">102h</div>
-          <div class="kpi-sub">lawyer hours saved by AI redline + drafting</div>
+          <div class="kpi-eyebrow">Same day delivery</div>
+          <div class="kpi-value up">95%</div>
+          <div class="kpi-sub">of matters MTD</div>
+          <span class="kpi-delta-pill up">+24%</span>
+        </div>
+        <div class="kpi">
+          <div class="kpi-eyebrow">Monthly earnings</div>
+          <div class="kpi-value up">$7,420</div>
+          <div class="kpi-sub">MTD</div>
           <div class="kpi-chart">
-            <svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg">
-              <text x="0" y="14" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">120h</text>
-              <text x="2" y="50" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">60h</text>
-              <text x="2" y="86" font-family="Geist Mono" font-size="9" fill="var(--muted-foreground)">0</text>
-              <line x1="26" y1="10" x2="200" y2="10" stroke="var(--border)" stroke-dasharray="2 3"/>
-              <line x1="26" y1="46" x2="200" y2="46" stroke="var(--border)" stroke-dasharray="2 3"/>
-              <line x1="26" y1="82" x2="200" y2="82" stroke="var(--border)"/>
-              <rect x="30" y="48" width="14" height="34" fill="var(--sku-1)" opacity="0.55"/>
-              <rect x="50" y="42" width="14" height="40" fill="var(--sku-1)" opacity="0.6"/>
-              <rect x="70" y="36" width="14" height="46" fill="var(--sku-1)" opacity="0.7"/>
-              <rect x="90" y="32" width="14" height="50" fill="var(--sku-1)" opacity="0.75"/>
-              <rect x="110" y="26" width="14" height="56" fill="var(--sku-1)" opacity="0.85"/>
-              <rect x="130" y="22" width="14" height="60" fill="var(--sku-1)" opacity="0.9"/>
-              <rect x="150" y="16" width="14" height="66" fill="var(--sku-1)"/>
-              <rect x="170" y="10" width="14" height="72" fill="var(--foreground)"/>
+            <svg viewBox="0 0 200 50" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-label="Monthly earnings bars">
+              <g fill="var(--chart-blue, #5a6f80)" opacity="0.75">
+                <rect x="2"   y="28" width="6" height="22"/>
+                <rect x="12"  y="20" width="6" height="30"/>
+                <rect x="22"  y="32" width="6" height="18"/>
+                <rect x="32"  y="16" width="6" height="34"/>
+                <rect x="42"  y="22" width="6" height="28"/>
+                <rect x="52"  y="10" width="6" height="40"/>
+                <rect x="62"  y="18" width="6" height="32"/>
+                <rect x="72"  y="28" width="6" height="22"/>
+                <rect x="82"  y="14" width="6" height="36"/>
+                <rect x="92"  y="20" width="6" height="30"/>
+                <rect x="102" y="8"  width="6" height="42"/>
+                <rect x="112" y="14" width="6" height="36"/>
+                <rect x="122" y="22" width="6" height="28"/>
+                <rect x="132" y="10" width="6" height="40"/>
+                <rect x="142" y="16" width="6" height="34"/>
+                <rect x="152" y="6"  width="6" height="44"/>
+                <rect x="162" y="18" width="6" height="32"/>
+                <rect x="172" y="10" width="6" height="40"/>
+                <rect x="182" y="14" width="6" height="36"/>
+                <rect x="192" y="4"  width="6" height="46"/>
+              </g>
             </svg>
           </div>
+          <span class="kpi-delta-pill up">+24%</span>
         </div>
       `,
 
