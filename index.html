@@ -5238,6 +5238,7 @@ select.text-input {
     </div>
   </aside>
 
+
 </div>
 
 <!-- ============ MOBILE DRAWER (sidebar slide-in) ============ -->
@@ -6353,49 +6354,67 @@ select.text-input {
         target: null,
         side: 'center',
         title: 'Welcome to Moritz',
-        body: "Eight tips to orient you. This is the operations dashboard the Director opens each morning."
-      },
-      {
-        target: '.sidebar .nav-subsection',
-        side: 'right',
-        title: 'Two views',
-        body: "Operations is the default morning triage. Finance is a deeper sales-style view of revenue, SKU mix, and pipeline. Switch between them in the sidebar."
+        body: "Quick tour of the interactive features. The dashboard is built to be acted on, not just read — every number, row, and chart segment does something on hover or click."
       },
       {
         target: '.view-operations .page-lede',
         side: 'bottom',
-        title: 'Morning state',
-        body: "The day's headline in one sentence. Counts of matters, lawyers, margin trend. Read this before anything else."
+        title: 'The lede is interactive',
+        body: "Each highlighted phrase is a jump. Hover \"Two lawyers\" to ring the Bench module. Click $284k to autoscroll into the Finances section. The headline is the ToC."
       },
       {
         target: '.view-operations .kpi-strip',
         side: 'bottom',
-        title: 'Five KPIs',
-        body: "Hero is on-time delivery — the same-day promise. Supporters track untouched matters, capacity, margin against estimate, and revenue."
+        title: 'KPI tiles drill in',
+        body: "The Monthly earnings tile is clickable — it autoscrolls to the matching chart in Finances. Same pattern repeats on the Finances strip; every tile points at the module that explains it."
       },
       {
-        target: '#qaList',
+        target: '#qaList .qa-row:first-child',
         side: 'right',
-        title: 'Quick actions',
-        body: "Triage queue. Click a verb to act. Reply, Review, Rebalance and Schedule open modals; Notify, Push, Flag, Nudge are one-tap. Click X to dismiss with 15-second undo."
+        title: 'Hover Quick actions for context',
+        body: "Hover any row and a popover follows the cursor with one or two sentences explaining why this matters, who's affected, and the risk. Removes the need to click into the matter."
       },
       {
-        target: '.voice',
-        side: 'left',
-        title: 'Voice',
-        body: "Latest customer signal alongside the operational numbers. Keeps the human stake visible."
+        target: '#qaList .qa-row:first-child .qa-dismiss',
+        side: 'right',
+        title: 'Dismiss what isn\'t relevant',
+        body: "Click the × to remove a row. A 9-second toast lets you undo. The Reset button in the bottom-right Demo controls restores anything you dismiss."
+      },
+      {
+        target: '#benchModule .bench-row.clickable',
+        side: 'right',
+        title: 'Click a bench row to rebalance',
+        body: "Over-capacity rows (the pink ones) are clickable. They open a Rebalance modal pre-populated with that lawyer's matters, a recommended receiver, and a before/after impact preview."
+      },
+      {
+        target: '#opsPipelineModule .pipe-board',
+        side: 'top',
+        title: 'Pipeline cards open editors',
+        body: "120 matters across 6 delivery stages. Click any card to open a matter editor — change the title, swap the assigned lawyer, advance the stage with prev/next, or delete."
+      },
+      {
+        target: '#opsPipelineModule .pipe-col.bottleneck',
+        side: 'top',
+        title: 'Bottlenecks surface visually',
+        body: "Attorney review is the firm's bottleneck — the column tints sand to call it out. The same logic applies to SLA-breach cards, over-cap bench rows, and at-risk accounts."
+      },
+      {
+        target: '.concentration',
+        side: 'top',
+        title: 'Hover charts for detail',
+        body: "Every colored segment, bar, and table row across the financial charts has a per-item popover. Hover any band on this concentration bar to see the customer, revenue, and matter count."
       },
       {
         target: '.rail',
         side: 'left',
-        title: 'Right sidebar',
-        body: "Account watch lists at-risk customers with health trend and last touch. Active now shows which lawyer is on which matter. Click an account card to schedule a check-in. Use the chevron at the top to collapse the rail to a thin strip."
+        title: 'Right rail for account health',
+        body: "Account watch lists at-risk customers; Active now shows who's working on what. Click any at-risk card to schedule a check-in. Use the chevron at the top to collapse the rail to a thin strip."
       },
       {
-        target: '#navToggles',
-        side: 'bottom',
-        title: 'Theme',
-        body: "Light or dark. The choice persists across sessions."
+        target: '.float-settings',
+        side: 'top',
+        title: 'Demo controls',
+        body: "Bottom-right: Heated and Calm swap the entire dashboard state in one click. Light and Dark toggle theme. Replay tour, Reset to restore dismissed items."
       }
     ];
 
